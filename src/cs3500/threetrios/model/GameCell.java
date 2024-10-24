@@ -6,7 +6,7 @@ public class GameCell implements Cell {
 
   public GameCell(boolean isHole) {
     this.isHole = isHole;
-    // do not need to initalize card field because it will by deafult be null
+    // do not need to initialize card field because it will by default be null
     // also keeps cell immutable
 
   }
