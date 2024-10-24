@@ -1,6 +1,11 @@
 package cs3500.threetrios.model;
 
-public class Card {
-}
+import java.util.Map;
 
-// hi
+public class Card {
+  private Map<Direction, Value> values;
+
+  public Card() {
+
+  }
+}
