@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HumanPlayer implements Player{
-  private final List<SimpleCard> cardsInHand;
-  private List<SimpleCard> ownedCards;
+  private final List<Card> cardsInHand;
+  private List<Card> ownedCards;
   private final Color color;
 
-  public HumanPlayer(List<SimpleCard> cardsInHand, Color color) {
+  /**
+   * Constructor for the HumanPlayer class.
+   * @param cardsInHand represents the list of playable cards that are in the player's hand
+   * @param color represents the color of this player
+   */
+  public HumanPlayer(List<Card> cardsInHand, Color color) {
     if (cardsInHand == null) {
       throw new IllegalArgumentException("Cards cannot be null");
     }
@@ -20,10 +25,12 @@ public class HumanPlayer implements Player{
       throw new IllegalArgumentException("Some cards are not the correct color");
     }
     this.cardsInHand = cardsInHand;
+    this.ownedCards.addAll(this.cardsInHand);
   }
 
-  private boolean checkCorrectColor(List<SimpleCard> cards) {
-    for (SimpleCard card : cards) {
+  // makes sure that all the cards in the hand is the correct color
+  private boolean checkCorrectColor(List<Card> cards) {
+    for (Card card : cards) {
       if (card.getColor() != this.color) {
         return false;
       }
@@ -31,17 +38,31 @@ public class HumanPlayer implements Player{
     return true;
   }
 
+  @Override
   public void removeFromHand(int index) {
     this.cardsInHand.remove(index);
   }
 
-  public List<SimpleCard> removeFromOwnerShip() {
-    ArrayList<SimpleCard> removedCards = new ArrayList<>();
+  @Override
+  public List<Card> removeFromOwnerShip() {
+    ArrayList<Card> removedCards = new ArrayList<>();
     for (int cards = 0; cards < this.cardsInHand.size(); cards++) {
       if (this.ownedCards.get(cards).getColor() != this.color) {
         removedCards.add(this.ownedCards.remove(cards));
       }
     }
     return removedCards;
+  }
+
+  public void addToOwnership(List<Card> cards) {
+    this.ownedCards.addAll(cards);
+  }
+
+  public List<Card> cardsInHand() {
+    return new ArrayList<>(this.cardsInHand);
+  }
+
+  public int getNumberCardsOwned() {
+    return this.ownedCards.size();
   }
 }

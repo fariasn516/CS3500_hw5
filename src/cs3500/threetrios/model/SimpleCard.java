@@ -35,16 +35,54 @@ public class SimpleCard implements Card{
     return true;
   }
 
+  @Override
+  public int compareTo(Card other, Direction direction) {
+    if (other == null) {
+      throw new IllegalArgumentException("Cannot compare null card");
+    }
+    if (direction == null) {
+      throw new IllegalArgumentException("Cannot compare null direction");
+    }
 
+    if (direction.equals(Direction.NORTH)) {
+      return compareValues(this.getValueFromDirection(direction),
+              other.getValueFromDirection(Direction.SOUTH));
+    }
+
+    else if (direction.equals(Direction.EAST)) {
+      return compareValues(this.getValueFromDirection(direction),
+              other.getValueFromDirection(Direction.WEST));
+    }
+
+    else if (direction.equals(Direction.SOUTH)) {
+      return compareValues(this.getValueFromDirection(direction),
+              other.getValueFromDirection(Direction.NORTH));
+    }
+
+    return compareValues(this.getValueFromDirection(direction),
+            other.getValueFromDirection(Direction.EAST));
+  }
+
+  // compares two integer values
+  private int compareValues(int value1, int value2) {
+    return Integer.compare(value1, value2);
+  }
+
+  @Override
   public void flipColor() {
     if (this.color == Color.RED) {
       this.color = Color.BLUE;
     }
-    this.color = Color.RED;
+    else {
+      this.color = Color.RED;
+    }
   }
 
   @Override
   public int getValueFromDirection(Direction direction) {
+    if (direction == null) {
+      throw new IllegalArgumentException("Direction cannot be null");
+    }
     return cardValues.get(direction).getValue();
   }
 
