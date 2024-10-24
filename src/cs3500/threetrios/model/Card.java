@@ -31,4 +31,11 @@ public interface Card {
    * @return
    */
   Color getColor();
+
+  /**
+   * Creates and returns a copy of this card.
+   *
+   * @return a new Card object that is a copy of this card.
+   */
+  Card copy();
 }

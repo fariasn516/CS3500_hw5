@@ -1,16 +1,23 @@
 package cs3500.threetrios.model;
 
-/**
- * Interface representing the contract for a Cell in the grid.
- */
-public interface Cell {
+public class GameCell implements Cell {
+  private final boolean isHole;
+  private Card card;
+
+  public GameCell(boolean isHole) {
+    this.isHole = isHole;
+    this.card = null;
+  }
 
   /**
    * Checks if the cell has a card.
    *
    * @return true if the cell contains a card, false otherwise.
    */
-  boolean hasCard();
+  @Override
+  public boolean hasCard() {
+    return card != null;
+  }
 
   /**
    * Places a card in the cell. If the cell is a hole or already contains a card,
@@ -19,7 +26,16 @@ public interface Cell {
    * @param card the card to place in the cell.
    * @throws IllegalStateException if the cell is a hole or already contains a card.
    */
-  void placeCard(Card card);
+  @Override
+  public void placeCard(Card card) {
+    if (isHole) {
+      throw new IllegalStateException("Cannot place a card in a hole.");
+    }
+    if (this.card != null) {
+      throw new IllegalStateException("Cell already contains a card.");
+    }
+    this.card = card;
+  }
 
   /**
    * Removes the card from the cell. If there is no card in the cell, this method will
@@ -27,14 +43,26 @@ public interface Cell {
    *
    * @throws IllegalStateException if the cell is a hole or does not have a card.
    */
-  void removeCard();
+  @Override
+  public void removeCard() {
+    if (isHole) {
+      throw new IllegalStateException("Cards do not exist in a hole.");
+    }
+    if (card == null) {
+      throw new IllegalStateException("No card in this cell to remove.");
+    }
+    card = null;
+  }
 
   /**
    * Returns whether the cell is a hole or not.
    *
    * @return true if the cell is a hole, false otherwise.
    */
-  boolean isHole();
+  @Override
+  public  boolean isHole() {
+    return isHole;
+  }
 
   /**
    * Returns the card in this cell. If there is no card or if the cell is a hole, this method
@@ -43,7 +71,16 @@ public interface Cell {
    * @return the card in this cell.
    * @throws IllegalStateException if the cell is a hole or there is no card in this cell.
    */
-  Card getCard();
+  @Override
+  public Card getCard() {
+    if (isHole) {
+      throw new IllegalStateException("Cannot get a card from a hole.");
+    }
+    if (card == null) {
+      throw new IllegalStateException("No card in this cell.");
+    }
+    return card.copy();
+  }
 
   /**
    * Converts the cell into a string representation.
@@ -52,7 +89,17 @@ public interface Cell {
    *
    * @return a string representation of the cell.
    */
-
-  String toString();
+  @Override
+  public String toString() {
+    if (isHole) {
+      return "X";
+    }
+    else if (card == null) {
+      return "_";
+    }
+    else {
+      return card.getColor().toString().substring(0, 1);
+    }
+  }
 }
 

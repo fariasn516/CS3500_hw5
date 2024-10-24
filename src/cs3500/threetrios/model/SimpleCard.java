@@ -2,7 +2,7 @@ package cs3500.threetrios.model;
 
 import java.util.Map;
 
-public class SimpleCard implements Card{
+public class SimpleCard implements Card {
   private Color color;
   private final Map<Direction, Value> cardValues;
 
@@ -89,6 +89,11 @@ public class SimpleCard implements Card{
   @Override
   public Color getColor() {
     return color;
+  }
+
+  @Override
+  public Card copy() {
+    return new SimpleCard(this.color, this.cardValues);
   }
 
   @Override
