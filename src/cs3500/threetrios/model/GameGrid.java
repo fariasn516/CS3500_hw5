@@ -1,37 +1,27 @@
 package cs3500.threetrios.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GameGrid implements Grid {
   private final int numRows;
   private final int numCols;
+  private final boolean[][] holeLayout;
   private final Cell[][] grid;
 
- public GameGrid(GridFileParser parser) {
-   this.numRows = parser.getNumRows();
-   this.numCols = parser.getNumCols();
-   this.grid = new Cell[numRows][numCols];
+  public GameGrid(int numRows, int numCols, boolean[][] holeLayout) {
+    this.numRows = numRows;
+    this.numCols = numCols;
+    this.holeLayout = holeLayout;
+    this.grid = new Cell[numRows][numCols];
 
-   boolean[][] holeLayout = parser.getHoleLayout();
-   int cardCellCount = 0;
-
-   for (int i = 0; i < numRows; i++) {
-     for (int j = 0; j < numCols; j++) {
-       boolean isHole = holeLayout[i][j];
-       grid[i][j] = new GameCell(isHole);
-
-       if (!isHole) {
-         cardCellCount++;
-       }
-     }
-   }
-
-   // make sure there is an odd number of card cells on grid
-   if (cardCellCount % 2 == 0) {
-     throw new IllegalArgumentException("The grid must have an odd number of card cells.");
-   }
- }
+    for (int i = 0; i < numRows; i++) {
+      for (int j = 0; j < numCols; j++) {
+        boolean isHole = holeLayout[i][j];
+        grid[i][j] = new GameCell(isHole);
+      }
+    }
+  }
 
   @Override
   public void placeCard(Card card, int row, int col) {
@@ -56,35 +46,48 @@ public class GameGrid implements Grid {
   }
 
   @Override
-  public List<Card> getAdjacentCards(int row, int col) {
-    if (row < 0 || row >= numRows || col < 0 || col >= numCols) {
-      throw new IllegalArgumentException("Row or column out of bounds.");
-    }
-
-    if (grid[row][col].isHole()) {
-      throw new IllegalArgumentException("Cannot retrieve adjacent cards from a hole.");
-    }
-
-    if (!grid[row][col].hasCard()) {
-      throw new IllegalArgumentException("No card in the specified cell to find adjacent cards.");
-    }
-
-    List<Card> adjacentCards = new ArrayList<>();
+  public Map<String, Direction> getAdjacentCardsWithDirections(int row, int col) {
+    Map<String, Direction> adjacentCardsWithDirections = new HashMap<>();
 
     if (row > 0 && grid[row - 1][col].hasCard()) {
-      adjacentCards.add(grid[row - 1][col].getCard());
-    }
-    if (row < numRows - 1 && grid[row + 1][col].hasCard()) {
-      adjacentCards.add(grid[row + 1][col].getCard());
-    }
-    if (col > 0 && grid[row][col - 1].hasCard()) {
-      adjacentCards.add(grid[row][col - 1].getCard());
-    }
-    if (col < numCols - 1 && grid[row][col + 1].hasCard()) {
-      adjacentCards.add(grid[row][col + 1].getCard());
+      adjacentCardsWithDirections.put(grid[row - 1][col].getCard().getName(), Direction.NORTH);
     }
 
-    return adjacentCards;
+    if (row < numRows - 1 && grid[row + 1][col].hasCard()) {
+      adjacentCardsWithDirections.put(grid[row + 1][col].getCard().getName(), Direction.SOUTH);
+    }
+
+    if (col > 0 && grid[row][col - 1].hasCard()) {
+      adjacentCardsWithDirections.put(grid[row][col - 1].getCard().getName(), Direction.WEST);
+    }
+
+    if (col < numCols - 1 && grid[row][col + 1].hasCard()) {
+      adjacentCardsWithDirections.put(grid[row][col + 1].getCard().getName(), Direction.EAST);
+    }
+
+    return adjacentCardsWithDirections;
+  }
+
+  public int getCardCellCount() {
+    int cardCellCount = 0;
+    for (int row = 0; row < numRows; row++) {
+      for (int col = 0; col < numCols; col++) {
+        if (!grid[row][col].isHole()) {
+          cardCellCount++;
+        }
+      }
+    }
+    return cardCellCount;
+  }
+
+  @Override
+  public int getNumRows() {
+   return this.numRows;
+  }
+
+  @Override
+  public int getNumCols() {
+    return this.numCols;
   }
 
   @Override

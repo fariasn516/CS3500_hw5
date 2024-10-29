@@ -1,6 +1,7 @@
 package cs3500.threetrios.model;
 
 import java.util.List;
+import java.util.Map;
 
 public interface Grid {
 
@@ -25,16 +26,20 @@ public interface Grid {
   boolean validCell(int row, int col);
 
   /**
-   * Returns a list of all adjacent cards to the specified card.
+   * Returns a list of adjacent cards along with their relative direction.
    *
-   * @param row the row of the card to check
-   * @param col the column of the card to check
-   * @return a list of adjacent cards (could be empty)
-   * @throws IllegalArgumentException if the specified row or column is out of bounds,
-   *                                  if the cell is a hole, or if the cell does not contain a card
-   *
+   * @param row the row of the reference cell
+   * @param col the column of the reference cell
+   * @return a list of CardDirection objects representing each adjacent card and its direction
    */
-  List<Card> getAdjacentCards(int row, int col);
+  Map<String, Direction> getAdjacentCardsWithDirections(int row, int col);
+
+  /**
+   * Returns the number of card cells (non-hole cells) in the grid.
+   *
+   * @return the count of card cells within the grid.
+   */
+  public int getCardCellCount();
 
   /**
    * Returns a copy of the grid as a 2D array of cells.
@@ -43,6 +48,19 @@ public interface Grid {
    */
   Cell[][] getCells();
 
+  /**
+   * Returns the number of rows in the grid.
+   *
+   * @return the number of rows.
+   */
+  int getNumRows();
+
+  /**
+   * Returns the number of columns in the grid.
+   *
+   * @return the number of columns.
+   */
+  int getNumCols();
   /**
    * Returns the card at the specified position on the grid.
    *

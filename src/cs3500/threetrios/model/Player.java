@@ -4,17 +4,19 @@ import java.util.List;
 
 public interface Player {
   /**
-   * Removes the card from hand of the player's cards given the index
-   * @param index represents the index of the card that is going to be removed
+   * Removes the specified card from the player's hand.
+   *
+   * @param card the card to remove from the player's hand.
+   * @throws IllegalArgumentException if the card is not in the player's hand.
    */
-  void removeFromHand(int index);
+  void removeFromHand(Card card);
 
   /**
    * Removes the cards of the incorrect color from ownership and returns the list of cards that
    * were removed.
    * @return the list of cards that were removed
    */
-  List<Card> removeFromOwnerShip();
+  List<Card> removeFromOwnership();
 
   /**
    * Adds the given list of cards to ownership.
@@ -27,11 +29,32 @@ public interface Player {
    * Returns the cards that are in the player's hand. NON-MUTABLE!!!
    * @return a new list of cards that represent the player's hand
    */
-  List<Card> cardsInHand();
+  List<Card> getCardsInHand();
 
   /**
    * Returns the number of cards that is owned by the player.
    * @return the number of cards owned by the player
    */
   int getNumberCardsOwned();
+
+  /**
+   * Returns the player's color.
+   *
+   * @return the color of the player.
+   */
+  Color getColor();
+
+  /**
+   * Returns a non-mutable list of cards owned by the player on grid.
+   *
+   * @return a list of cards representing the player's ownership on grid.
+   */
+  List<Card> getOwnedCardsOnGrid();
+
+  /**
+   * Returns a non-mutable list of all cards owned by the player, including those in hand and on grid.
+   *
+   * @return a combined list of all cards owned by the player.
+   */
+  List<Card> getAllOwnedCards();
 }

@@ -3,9 +3,9 @@ package cs3500.threetrios.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HumanPlayer implements Player{
+public class HumanPlayer implements Player {
   private final List<Card> cardsInHand;
-  private final List<Card> ownedCards;
+  private final List<Card> ownedCardsOnGrid;
   private final Color color;
 
   /**
@@ -25,7 +25,7 @@ public class HumanPlayer implements Player{
       throw new IllegalArgumentException("Some cards are not the correct color");
     }
     this.cardsInHand = cardsInHand;
-    this.ownedCards = new ArrayList<>();
+    this.ownedCardsOnGrid = new ArrayList<>();
   }
 
   /**
@@ -43,16 +43,19 @@ public class HumanPlayer implements Player{
   }
 
   @Override
-  public void removeFromHand(int index) {
-    this.cardsInHand.remove(index);
+  public void removeFromHand(Card card) {
+    if (!cardsInHand.contains(card)) {
+      throw new IllegalArgumentException("The card is not in the player's hand.");
+    }
+    cardsInHand.remove(card);
   }
 
   @Override
-  public List<Card> removeFromOwnerShip() {
+  public List<Card> removeFromOwnership() {
     ArrayList<Card> removedCards = new ArrayList<>();
-    for (int cards = 0; cards < this.ownedCards.size(); cards++) {
-      if (this.ownedCards.get(cards).getColor() != this.color) {
-        removedCards.add(this.ownedCards.remove(cards));
+    for (int cards = 0; cards < this.ownedCardsOnGrid.size(); cards++) {
+      if (this.ownedCardsOnGrid.get(cards).getColor() != this.color) {
+        removedCards.add(this.ownedCardsOnGrid.remove(cards));
       }
     }
     return removedCards;
@@ -60,16 +63,33 @@ public class HumanPlayer implements Player{
 
   @Override
   public void addToOwnership(List<Card> cards) {
-    this.ownedCards.addAll(cards);
+    this.ownedCardsOnGrid.addAll(cards);
   }
 
   @Override
-  public List<Card> cardsInHand() {
+  public List<Card> getOwnedCardsOnGrid() {
+    return new ArrayList<>(this.ownedCardsOnGrid);
+  }
+
+  @Override
+  public List<Card> getCardsInHand() {
     return new ArrayList<>(this.cardsInHand);
   }
 
   @Override
   public int getNumberCardsOwned() {
-    return this.ownedCards.size() + this.cardsInHand.size();
+    return this.ownedCardsOnGrid.size() + this.cardsInHand.size();
+  }
+
+  @Override
+  public Color getColor() {
+    return this.color;
+  }
+
+  @Override
+  public List<Card> getAllOwnedCards() {
+    List<Card> allOwnedCards = new ArrayList<>(this.cardsInHand);
+    allOwnedCards.addAll(this.ownedCardsOnGrid);
+    return allOwnedCards;
   }
 }
