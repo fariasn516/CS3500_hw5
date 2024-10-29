@@ -1,0 +1,34 @@
+Overview:
+We are trying to play the game ThreeTrios, which is a modification of the game Triple Triad.
+Three Trios is a two-player game played on a regular grid of cells and custom cards.
+Each player has a color: blue/red. And they each have a hand of cards.
+When the game begins, both players are dealt an equal number of cards from a collection of cards.
+The grid starts with no cards on it and will card cells and holes where cards cannot be placed.
+There needs to be an odd number (n) card cells and an even number (n+1) of cards.
+The red player goes first and when cards are placed down, they commence "battle" with one other
+adjacent cards and the card with the higher value will "flip" the card with the lower value.
+The game ends when all card cells are filled and the winner is who owns the most number of cards.
+
+Quick Start:
+
+Key Components:
+Model: The model is a driver of the game, where all game operations/rules are being commenced.
+The model contains the grid and the two players that are used for gameplay.
+View: The view is driven by the model and is based on whatever values the model has for the grid
+and players.
+
+Key Subcomponents:
+
+
+Source Organization:
+cs3500.threetrios:
+cs3500.threetrios.model -
+Card interface
+- interface for the cards
+SimpleCard
+- represents cards to be used for the game
+
+cs3500.threetrios.view -
+
+
+test

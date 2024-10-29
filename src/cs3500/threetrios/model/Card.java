@@ -18,6 +18,12 @@ public interface Card {
    */
   void flipColor();
 
+  /**
+   * Makes this card's color the given color.
+   * @param color represents the color the card is going to be
+   */
+  void createCardColor(Color color);
+
   // Below are OBSERVATIONS
   /**
    * Returns the Value at the given Direction
@@ -31,6 +37,12 @@ public interface Card {
    * @return
    */
   Color getColor();
+
+  /**
+   *
+   * @return
+   */
+  String getName();
 
   /**
    * Creates and returns a copy of this card.

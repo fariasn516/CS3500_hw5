@@ -3,25 +3,25 @@ package cs3500.threetrios.model;
 import java.util.Map;
 
 public class SimpleCard implements Card {
+  private final String name;
   private Color color;
   private final Map<Direction, Value> cardValues;
 
   /**
    * Constructor for SimpleCard.
-   * @param color represents the Color that this card is
    * @param cardValues represents the Value that this card has at each Direction
    */
-  public SimpleCard(Color color, Map<Direction, Value> cardValues) {
-    if (color == null) {
-      throw new IllegalArgumentException("Color cannot be null");
-    }
+  public SimpleCard(String name, Map<Direction, Value> cardValues) {
     if (cardValues == null) {
       throw new IllegalArgumentException("Values cannot be null");
+    }
+    if (name == null) {
+      throw new IllegalArgumentException("Name cannot be null");
     }
     if (!validValues(cardValues)) {
       throw new IllegalArgumentException("All directions must be accounted for");
     }
-    this.color = color;
+    this.name = name;
     this.cardValues = cardValues;
   }
 
@@ -69,6 +69,11 @@ public class SimpleCard implements Card {
   }
 
   @Override
+  public void createCardColor(Color color) {
+    this.color = color;
+  }
+
+  @Override
   public void flipColor() {
     if (this.color == Color.RED) {
       this.color = Color.BLUE;
@@ -92,8 +97,13 @@ public class SimpleCard implements Card {
   }
 
   @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
   public Card copy() {
-    return new SimpleCard(this.color, this.cardValues);
+    return new SimpleCard(this.name, this.cardValues);
   }
 
   @Override
@@ -118,6 +128,7 @@ public class SimpleCard implements Card {
   @Override
   public String toString() {
     StringBuilder stringRep = new StringBuilder();
+    stringRep.append(this.name).append(" ");
     for (Direction direction : Direction.values()) {
       stringRep.append(direction.toString()).append(": ")
               .append(getValueFromDirection(direction)).append(" ");

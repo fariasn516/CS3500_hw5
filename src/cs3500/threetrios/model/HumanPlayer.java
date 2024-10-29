@@ -5,7 +5,7 @@ import java.util.List;
 
 public class HumanPlayer implements Player{
   private final List<Card> cardsInHand;
-  private List<Card> ownedCards;
+  private final List<Card> ownedCards;
   private final Color color;
 
   /**
@@ -25,10 +25,14 @@ public class HumanPlayer implements Player{
       throw new IllegalArgumentException("Some cards are not the correct color");
     }
     this.cardsInHand = cardsInHand;
-    this.ownedCards.addAll(this.cardsInHand);
+    this.ownedCards = new ArrayList<>();
   }
 
-  // makes sure that all the cards in the hand is the correct color
+  /**
+   * Makes sure that all the cards given are the correct color.
+   * @param cards represents the cards in hand
+   * @return whether the cards are all the correct color
+   */
   private boolean checkCorrectColor(List<Card> cards) {
     for (Card card : cards) {
       if (card.getColor() != this.color) {
@@ -46,7 +50,7 @@ public class HumanPlayer implements Player{
   @Override
   public List<Card> removeFromOwnerShip() {
     ArrayList<Card> removedCards = new ArrayList<>();
-    for (int cards = 0; cards < this.cardsInHand.size(); cards++) {
+    for (int cards = 0; cards < this.ownedCards.size(); cards++) {
       if (this.ownedCards.get(cards).getColor() != this.color) {
         removedCards.add(this.ownedCards.remove(cards));
       }
@@ -54,15 +58,18 @@ public class HumanPlayer implements Player{
     return removedCards;
   }
 
+  @Override
   public void addToOwnership(List<Card> cards) {
     this.ownedCards.addAll(cards);
   }
 
+  @Override
   public List<Card> cardsInHand() {
     return new ArrayList<>(this.cardsInHand);
   }
 
+  @Override
   public int getNumberCardsOwned() {
-    return this.ownedCards.size();
+    return this.ownedCards.size() + this.cardsInHand.size();
   }
 }
