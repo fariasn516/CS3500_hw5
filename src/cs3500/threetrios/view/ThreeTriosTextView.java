@@ -2,7 +2,6 @@ package cs3500.threetrios.view;
 
 import cs3500.threetrios.model.ThreeTriosModel;
 import cs3500.threetrios.model.Card;
-import cs3500.threetrios.model.Color;
 
 import java.io.IOException;
 import java.util.List;
@@ -67,10 +66,7 @@ public class ThreeTriosGameTextView implements ThreeTriosGameView {
    * @return a string representation of the current player's color.
    */
   private String renderCurrentPlayer() {
-    StringBuilder playerState = new StringBuilder("Player: ");
-    Color color = model.getCurrentPlayer().getColor();
-    String outputColor = color == Color.RED ? "RED" : "BLUE";
-    return playerState.append(outputColor).toString();
+    return model.getCurrentPlayer().toString();
   }
 
   /**
@@ -79,22 +75,7 @@ public class ThreeTriosGameTextView implements ThreeTriosGameView {
    * @return the string representation of the current grid state.
    */
   private String renderGrid() {
-    StringBuilder gridState = new StringBuilder();
-
-    for (int row = 0; row < model.getGrid().getNumRows(); row++) {
-      for (int col = 0; col < model.getGrid().getNumCols(); col++) {
-        if (model.getGrid().getCells()[row][col].isHole()) {
-          gridState.append(" ");
-        } else if (model.getGrid().getCells()[row][col].hasCard()) {
-          Card card = model.getGrid().getCells()[row][col].getCard();
-          gridState.append(card.getColor() == Color.RED ? "R" : "B");
-        } else {
-          gridState.append("_");
-        }
-      }
-      gridState.append("\n");
-    }
-    return gridState.toString();
+    return model.getGrid().toString();
   }
 
   /**
