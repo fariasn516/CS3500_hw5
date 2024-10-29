@@ -1,8 +1,84 @@
 package cs3500.threetrios.model;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 public class GridFileParser {
-  // this class will parse through a file to get all aspects needed for grid creation
-  // rows
-  // cols
-  // hole layout
+  private final File file;
+
+  public GridFileParser(File file) throws FileNotFoundException {
+    this.file = file;
+  }
+
+  /**
+   * Parses the grid configuration file and creates a new GameGrid instance.
+   *
+   * @return a new GameGrid object based on the parsed configuration file.
+   * @throws FileNotFoundException    if the file is not found.
+   * @throws IllegalArgumentException if the file format is invalid.
+   */
+  public GameGrid createGridFromFile() throws FileNotFoundException {
+    Scanner scanner = new Scanner(this.file);
+    int numRows = readDimension(scanner, "Invalid row count.");
+    int numCols = readDimension(scanner, "Invalid column count.");
+    boolean[][] holeLayout = readHoleLayout(scanner, numRows, numCols);
+
+    return new GameGrid(numRows, numCols, holeLayout);
+  }
+
+  private int readDimension(Scanner scanner, String errorMessage) {
+    if (!scanner.hasNextInt()) {
+      throw new IllegalArgumentException(errorMessage);
+    }
+
+    int dimension = scanner.nextInt();
+    scanner.nextLine();
+    return dimension;
+  }
+
+  private boolean[][] readHoleLayout(Scanner scanner, int numRows, int numCols) {
+    boolean[][] holeLayout = new boolean[numRows][numCols];
+    int row = 0;
+
+    while (scanner.hasNextLine() && row < numRows) {
+      String line = scanner.nextLine();
+      validRowLength(line, numCols);
+      holeLayout[row] = readRow(line, numCols);
+      row++;
+    }
+
+    if (row != numRows) {
+      throw new IllegalArgumentException("Grid row count mismatch.");
+    }
+
+    return holeLayout;
+  }
+
+  private void validRowLength(String line, int expectedLength) {
+    if (line.length() != expectedLength) {
+      throw new IllegalArgumentException("Number of columns format invalid.");
+    }
+  }
+
+  private boolean[] readRow(String line, int numCols) {
+    boolean[] rowLayout = new boolean[numCols];
+    for (int col = 0; col < numCols; col++) {
+      char cell = line.charAt(col);
+      rowLayout[col] = readCell(cell);
+    }
+    return rowLayout;
+  }
+
+  private boolean readCell(char cell) {
+    if (cell == 'X') {
+      return true;
+    }
+    else if (cell == 'C') {
+      return false;
+    }
+    else {
+      throw new IllegalArgumentException("Invalid character in grid layout: " + cell);
+    }
+  }
 }
