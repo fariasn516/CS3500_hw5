@@ -2,7 +2,6 @@ package cs3500.threetrios.model;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,8 +11,12 @@ import java.util.Scanner;
 public class CardFileParser {
   private final File file;
 
-  public CardFileParser(File file) throws FileNotFoundException {
+  public CardFileParser(File file) {
     this.file = file;
+  }
+
+  public CardFileParser(String fileName) {
+    this.file = new File(fileName);
   }
 
   public List<Card> createDeck() throws FileNotFoundException {
@@ -25,45 +28,40 @@ public class CardFileParser {
       for (Direction direction : Direction.values()) {
         if (scanner.hasNext()) {
           String cardValue = scanner.next();
-          switch (cardValue) {
-            case "1":
-              values.put(direction, Value.ONE);
-            break;
-            case "2":
-              values.put(direction, Value.TWO);
-            break;
-            case "3":
-              values.put(direction, Value.THREE);
-            break;
-            case "4":
-              values.put(direction, Value.FOUR);
-            break;
-            case "5":
-              values.put(direction, Value.FIVE);
-            break;
-            case "6":
-              values.put(direction, Value.SIX);
-            break;
-            case "7":
-              values.put(direction, Value.SEVEN);
-            break;
-            case "8":
-              values.put(direction, Value.EIGHT);
-            break;
-            case "9":
-              values.put(direction, Value.NINE);
-            break;
-            case "A":
-              values.put(direction, Value.ACE);
-            break;
-            default:
-              throw new IllegalArgumentException("Invalid card value: " + cardValue);
-          }
+          Value value = findValue(cardValue);
+          values.put(direction, value);
         }
       }
       deck.add(new SimpleCard(cardName, values));
     }
     scanner.close();
     return deck;
+  }
+
+  private Value findValue(String cardValue) {
+    switch (cardValue) {
+      case "1":
+        return Value.ONE;
+      case "2":
+        return Value.TWO;
+      case "3":
+        return Value.THREE;
+      case "4":
+        return Value.FOUR;
+      case "5":
+        return Value.FIVE;
+      case "6":
+        return Value.SIX;
+      case "7":
+        return Value.SEVEN;
+      case "8":
+        return Value.EIGHT;
+      case "9":
+        return Value.NINE;
+      case "A":
+        return Value.ACE;
+      default:
+        throw new IllegalArgumentException("Invalid card value: " + cardValue);
+    }
   }
 }

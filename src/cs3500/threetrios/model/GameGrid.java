@@ -23,6 +23,13 @@ public class GameGrid implements Grid {
     }
   }
 
+  public GameGrid(int numRows, int numCols, Cell[][] grid) {
+    this.numRows = numRows;
+    this.numCols = numCols;
+    this.grid = grid;
+    this.holeLayout = new boolean[numRows][numCols];
+  }
+
   @Override
   public void placeCard(Card card, int row, int col) {
     if (row < 0 || row >= numRows || col < 0 || col >= numCols) {
@@ -122,14 +129,24 @@ public class GameGrid implements Grid {
 
   @Override
   public String toString() {
-    StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < numRows; i++) {
-      for (int j = 0; j < numCols; j++) {
-        builder.append(grid[i][j].toString()).append(" ");
+    StringBuilder stringRep = new StringBuilder();
+    for (int row = 0; row < numRows; row++) {
+      for (int col = 0; col < numCols; col++) {
+        Cell cell = grid[row][col];
+        if (cell.isHole()) {
+          stringRep.append(" ");
+        }
+        else if (cell.hasCard()) {
+          Card card = cell.getCard();
+          stringRep.append(card.getColor() == Color.RED ? "R" : "B");
+        }
+        else {
+          stringRep.append("_");
+        }
       }
-      builder.append("\n");
+      stringRep.append("\n");
     }
-    return builder.toString();
+    return stringRep.toString();
   }
 }
 

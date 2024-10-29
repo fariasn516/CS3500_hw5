@@ -1,5 +1,6 @@
 package cs3500.threetrios.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleCard implements Card {
@@ -25,7 +26,34 @@ public class SimpleCard implements Card {
     this.cardValues = cardValues;
   }
 
-  // checks if every Direction has a corresponding Value.
+  /**
+   * Another constructor for SimpleCard.
+   * @param name represents the name of this card
+   * @param north represents the value at the north direction
+   * @param south represents the value at the south direction
+   * @param east represents the value at the east direction
+   * @param west represents the value at the west direction
+   */
+  public SimpleCard(String name, Value north, Value south, Value east, Value west) {
+    if (name == null) {
+      throw new IllegalArgumentException("Name cannot be null");
+    }
+    if (north == null || south == null || east == null || west == null) {
+      throw new IllegalArgumentException("One of your values is null");
+    }
+    this.name = name;
+    this.cardValues = new HashMap<>();
+    cardValues.put(Direction.NORTH, north);
+    cardValues.put(Direction.SOUTH, south);
+    cardValues.put(Direction.EAST, east);
+    cardValues.put(Direction.WEST, west);
+  }
+
+  /**
+   * Checks if the map has every possible direction.
+   * @param values represents the map of directions and values
+   * @return true if each direction is accounted for and false if not
+   */
   private boolean validValues(Map<Direction, Value> values) {
     for (Direction direction : Direction.values()) {
       if (!values.containsKey(direction)) {
@@ -93,6 +121,9 @@ public class SimpleCard implements Card {
 
   @Override
   public Color getColor() {
+    if (color == null) {
+      throw new IllegalStateException("Color has not been assigned yet!");
+    }
     return color;
   }
 
@@ -114,6 +145,12 @@ public class SimpleCard implements Card {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof SimpleCard)) {
+      return false;
+    }
+    if (!this.name.equals(((SimpleCard) obj).name)) {
+      return false;
+    }
+    if (!this.color.equals(((SimpleCard) obj).color)) {
       return false;
     }
     for (Direction direction : Direction.values()) {

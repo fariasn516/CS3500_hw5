@@ -136,6 +136,11 @@ public class ThreeTriosModel implements Model {
     }
   }
 
+  /**
+   *
+   * @param name
+   * @return
+   */
   private Card findCardByName(String name) {
     Cell[][] cells = grid.getCells();
 
@@ -225,5 +230,15 @@ public class ThreeTriosModel implements Model {
     else {
       return "Red Player";
     }
+  }
+
+  @Override
+  public Grid getGrid() {
+    return new GameGrid(this.grid.getNumRows(), this.grid.getNumCols(), this.grid.getCells());
+  }
+
+  @Override
+  public Player getCurrentPlayer() {
+    return new HumanPlayer(this.currentPlayer.getCardsInHand(), this.currentPlayer.getColor());
   }
 }

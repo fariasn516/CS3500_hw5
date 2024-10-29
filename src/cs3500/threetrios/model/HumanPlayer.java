@@ -92,4 +92,9 @@ public class HumanPlayer implements Player {
     allOwnedCards.addAll(this.ownedCardsOnGrid);
     return allOwnedCards;
   }
+
+  @Override
+  public String toString() {
+    return "Player: " + color;
+  }
 }

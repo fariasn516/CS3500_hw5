@@ -67,4 +67,18 @@ public interface Model {
    */
   public String winner();
 
+  // Below are OBSERVATIONS
+
+  /**
+   *
+   * @return the current grid state
+   */
+  public Grid getGrid();
+
+  /**
+   *
+   * @return the current player
+   */
+  public Player getCurrentPlayer();
+
 }
