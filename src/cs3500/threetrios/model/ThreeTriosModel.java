@@ -18,7 +18,8 @@ public class ThreeTriosModel implements Model {
   private boolean gameEnded; // determines whether the game has ended or not
   private final Random rand; // helps with shuffling of the cards if needed
 
-  // INVARIANT:
+  // INVARIANT: The number of card cells on the grid is always one less than the total amount of
+  // cards that are being played with.
 
   /**
    * Constructor for the model, does not take in anything.
