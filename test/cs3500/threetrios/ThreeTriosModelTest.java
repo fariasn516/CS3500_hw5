@@ -471,7 +471,7 @@ public class ThreeTriosModelTest {
   @Test
   public void shouldReturnOwnedCards() {
     this.blueHumanPlayer.addToOwnership(this.ratCard);
-    List<Card> expectedOwnedCards = List.of(this.ratCard, this.roosterCard);
+    List<Card> expectedOwnedCards = List.of(this.ratCard);
     Assert.assertEquals(expectedOwnedCards, this.blueHumanPlayer.getOwnedCardsOnGrid());
   }
 
