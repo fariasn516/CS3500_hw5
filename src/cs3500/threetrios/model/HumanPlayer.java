@@ -3,10 +3,13 @@ package cs3500.threetrios.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a human player, aka a player of the game Three Trios.
+ */
 public class HumanPlayer implements Player {
-  private final List<Card> cardsInHand;
-  private final List<Card> ownedCardsOnGrid;
-  private final Color color;
+  private final List<Card> cardsInHand; // represents the cards in the hand
+  private final List<Card> ownedCardsOnGrid; // represents the cards that are owned and on the grid
+  private final Color color; // represents this player's color
 
   /**
    * Constructor for the HumanPlayer class.
@@ -50,20 +53,18 @@ public class HumanPlayer implements Player {
     cardsInHand.remove(card);
   }
 
+
   @Override
-  public List<Card> removeFromOwnership() {
-    ArrayList<Card> removedCards = new ArrayList<>();
-    for (int cards = 0; cards < this.ownedCardsOnGrid.size(); cards++) {
-      if (this.ownedCardsOnGrid.get(cards).getColor() != this.color) {
-        removedCards.add(this.ownedCardsOnGrid.remove(cards));
-      }
+  public void removeFromOwnership(Card card) {
+    if (!ownedCardsOnGrid.contains(card)) {
+      throw new IllegalArgumentException("The card is not in the player's grid yet.");
     }
-    return removedCards;
+    ownedCardsOnGrid.remove(card);
   }
 
   @Override
-  public void addToOwnership(List<Card> cards) {
-    this.ownedCardsOnGrid.addAll(cards);
+  public void addToOwnership(Card cards) {
+    this.ownedCardsOnGrid.add(cards);
   }
 
   @Override
@@ -84,13 +85,6 @@ public class HumanPlayer implements Player {
   @Override
   public Color getColor() {
     return this.color;
-  }
-
-  @Override
-  public List<Card> getAllOwnedCards() {
-    List<Card> allOwnedCards = new ArrayList<>(this.cardsInHand);
-    allOwnedCards.addAll(this.ownedCardsOnGrid);
-    return allOwnedCards;
   }
 
   @Override

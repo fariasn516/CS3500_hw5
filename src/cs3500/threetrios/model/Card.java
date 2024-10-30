@@ -1,5 +1,8 @@
 package cs3500.threetrios.model;
 
+/**
+ * Represents the cards that is going to be played with in the
+ */
 public interface Card {
 
   /**
@@ -33,20 +36,19 @@ public interface Card {
   int getValueFromDirection(Direction direction);
 
   /**
-   *
-   * @return
+   * Returns the color of this card.
+   * @return the color of this card
    */
   Color getColor();
 
   /**
-   *
-   * @return
+   * Finds and returns the name of this card.
+   * @return a String that represents the name of this card
    */
   String getName();
 
   /**
    * Creates and returns a copy of this card.
-   *
    * @return a new Card object that is a copy of this card.
    */
   Card copy();

@@ -12,17 +12,15 @@ public interface Player {
   void removeFromHand(Card card);
 
   /**
-   * Removes the cards of the incorrect color from ownership and returns the list of cards that
-   * were removed.
-   * @return the list of cards that were removed
+   * Removes the given card from the ownership of the player.
    */
-  List<Card> removeFromOwnership();
+  void removeFromOwnership(Card card);
 
   /**
    * Adds the given list of cards to ownership.
    * @param cards represents the list of cards that are going to be added to ownership
    */
-  void addToOwnership(List<Card> cards);
+  void addToOwnership(Card cards);
 
   // Below are OBSERVATIONS
   /**
@@ -50,11 +48,4 @@ public interface Player {
    * @return a list of cards representing the player's ownership on grid.
    */
   List<Card> getOwnedCardsOnGrid();
-
-  /**
-   * Returns a non-mutable list of all cards owned by the player, including those in hand and on grid.
-   *
-   * @return a combined list of all cards owned by the player.
-   */
-  List<Card> getAllOwnedCards();
 }

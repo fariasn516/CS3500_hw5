@@ -2,8 +2,10 @@ package cs3500.threetrios.model;
 
 import java.util.List;
 
+/**
+ * The interface for our game model(s), represents the necessities of gameplay
+ */
 public interface Model {
-
   /**
    * Initializes the game with the given deck of cards, shuffle option, and grid configuration.
    * Deals the cards to players and sets the starting player.
@@ -15,7 +17,7 @@ public interface Model {
    * @throws IllegalArgumentException if the cards list is null, grid has an even number of card
    *                                  cells, or the number of cards is incorrect.
    */
-  public <C extends Card> void startGame(List<C> cards, boolean shuffle, Grid grid);
+   <C extends Card> void startGame(List<C> cards, boolean shuffle, Grid grid);
 
   /**
    * Plays the placing phase of the turn by placing a card on the specified grid cell.
@@ -26,7 +28,7 @@ public interface Model {
    * @throws IllegalStateException    if the game has not started or has already ended.
    * @throws IllegalArgumentException if the cell is not a valid placement cell.
    */
-  public void placingPhase(Card card, int row, int col);
+   void placingPhase(Card card, int row, int col);
 
   /**
    * Plays the battling phase of the turn after a card has been placed. Determines who wins the
@@ -36,7 +38,7 @@ public interface Model {
    * @param row the row of the placed card.
    * @param col the column of the placed card.
    */
-  public void battlingPhase(int row, int col);
+   void battlingPhase(int row, int col);
 
   /**
    * Plays a complete turn for the current player. This includes placing a card on the grid,
@@ -48,7 +50,7 @@ public interface Model {
    * @throws IllegalStateException    if the game has not started or has ended.
    * @throws IllegalArgumentException if the given card is not in the player's hand.
    */
-  public void takeTurn(Card card, int row, int col);
+   void takeTurn(Card card, int row, int col);
 
   /**
    * Checks whether the game is over by finding if all card cells are filled. Also, updates
@@ -57,7 +59,7 @@ public interface Model {
    * @return true if the game is over
    * @throws IllegalStateException if the game has not started.
    */
-  public boolean isGameOver();
+   boolean isGameOver();
 
   /**
    * Returns the winner of the game based on the number of cards each player owns on the grid.
@@ -65,26 +67,25 @@ public interface Model {
    * @return a string representing the winner: "Blue Player" or "Red Player".
    * @throws IllegalStateException if the game has not started or is not yet over.
    */
-  public String winner();
+   String winner();
 
   // Below are OBSERVATIONS
-
   /**
-   *
+   * Returns the current state of the grid.
    * @return the current grid state
    */
-  public Grid getGrid();
+   Grid getGrid();
 
   /**
-   *
+   * Returns the current player.
    * @return the current player
    */
-  public Player getCurrentPlayer();
+   Player getCurrentPlayer();
 
   /**
-   *
+   * Checks if the game has been started and returns as such.
    * @return if the game has started
    */
-  public boolean hasStarted();
+   boolean hasStarted();
 
 }

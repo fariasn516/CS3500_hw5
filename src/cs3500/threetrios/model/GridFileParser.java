@@ -4,9 +4,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+/**
+ * Class used to parse a file for all the necessary things for the grid.
+ */
 public class GridFileParser {
-  private final File file;
+  private final File file; // represents the file to be parsed through
 
+  /**
+   * Constructor for GridFileParser, takes in a file.
+   * @param file represents the file to be parsed through
+   * @throws FileNotFoundException when the file cannot be found
+   */
   public GridFileParser(File file) throws FileNotFoundException {
     this.file = file;
   }

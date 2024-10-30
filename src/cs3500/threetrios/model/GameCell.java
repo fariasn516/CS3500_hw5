@@ -1,20 +1,22 @@
 package cs3500.threetrios.model;
 
+/**
+ * Represents a cell in a game of ThreeTrios.
+ */
 public class GameCell implements Cell {
-  private final boolean isHole;
-  private Card card;
+  private final boolean isHole; // represents whether this cell is a hole
+  private Card card; // represents the card that is placed in this cell
 
+  /**
+   * Constructor for GameCell, takes in a boolean that represents whether it is a hole.
+   * @param isHole represents whether the cell is a hole
+   */
   public GameCell(boolean isHole) {
     this.isHole = isHole;
     // do not need to initialize card field because it will by default be null
     // also keeps cell immutable
   }
 
-  /**
-   * Checks if the cell has a card.
-   *
-   * @return true if the cell contains a card, false otherwise.
-   */
   @Override
   public boolean hasCard() {
     return card != null;
@@ -80,7 +82,7 @@ public class GameCell implements Cell {
     if (card == null) {
       throw new IllegalStateException("No card in this cell.");
     }
-    return card.copy();
+    return card;
   }
 
   /**

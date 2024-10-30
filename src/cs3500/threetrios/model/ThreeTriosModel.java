@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * The model class for the game Three Trios, this is where all the rules of gameplay is handled.
+ */
 public class ThreeTriosModel implements Model {
   private Player bluePlayer; // the blue player
   private Player redPlayer; // the red player
@@ -14,6 +17,8 @@ public class ThreeTriosModel implements Model {
   private boolean started; // determines whether the game has started or not
   private boolean gameEnded; // determines whether the game has ended or not
   private final Random rand; // helps with shuffling of the cards if needed
+
+  // INVARIANT:
 
   /**
    * Constructor for the model, does not take in anything.
@@ -38,9 +43,6 @@ public class ThreeTriosModel implements Model {
   public <C extends Card> void startGame(List<C> cards, boolean shuffle, Grid grid) {
     if (started) {
       throw new IllegalStateException("Game already started!");
-    }
-    if (gameEnded) {
-      throw new IllegalStateException("Game already ended!");
     }
     if (cards == null) {
       throw new IllegalArgumentException("Cards cannot be null");
@@ -80,10 +82,11 @@ public class ThreeTriosModel implements Model {
   }
 
   /**
-   *
-   * @param cards
-   * @param grid
-   * @return
+   * Determines if the number of cards adheres to the game's rules (ie one more than the number of
+   * card cells in the grid)
+   * @param cards represents the list of cards in the game
+   * @param grid represents the grid in the game
+   * @return true if the number of cards is correct and false otherwise
    */
   private <C extends Card> boolean invalidCardCount(List<C> cards, Grid grid) {
     return cards.size() != grid.getCardCellCount() + 1;
@@ -97,7 +100,7 @@ public class ThreeTriosModel implements Model {
   private <C extends Card> void dealCards(List<C> cards) {
     List<Card> redHand = new ArrayList<>();
     List<Card> blueHand = new ArrayList<>();
-    for (int allCards = 0; allCards < cards.size() - 1; allCards++) {
+    for (int allCards = 0; allCards < cards.size(); allCards++) {
       if (allCards % 2 == 0) {
         cards.get(allCards).createCardColor(Color.RED);
         redHand.add(cards.get(allCards));
@@ -114,13 +117,25 @@ public class ThreeTriosModel implements Model {
 
   @Override
   public void placingPhase(Card card, int row, int col) {
+    if (!started) {
+      throw new IllegalStateException("Game not started!");
+    }
+    if (gameEnded) {
+      throw new IllegalStateException("Game already ended!");
+    }
     currentPlayer.removeFromHand(card);
-    currentPlayer.addToOwnership(List.of(card));
+    currentPlayer.addToOwnership(card);
     grid.placeCard(card, row, col);
   }
 
   @Override
   public void battlingPhase(int row, int col) {
+    if (!started) {
+      throw new IllegalStateException("Game not started!");
+    }
+    if (gameEnded) {
+      throw new IllegalStateException("Game already ended!");
+    }
     Card placedCard = grid.getCard(row, col);
     Map<String, Direction> adjacentCards = grid.getAdjacentCardsWithDirections(row, col);
 
@@ -134,17 +149,27 @@ public class ThreeTriosModel implements Model {
       Card adjCard = findCardByName(adjCardName);
 
       if (adjCard.getColor() != placedCard.getColor()) {
-        if (placedCard.getValueFromDirection(direction) > adjCard.getValueFromDirection(oppositeDirection)) {
+        if (placedCard.getValueFromDirection(direction)
+                > adjCard.getValueFromDirection(oppositeDirection)) {
           adjCard.flipColor();
+          currentPlayer.addToOwnership(adjCard);
+          if (currentPlayer.getColor() == Color.BLUE) {
+            redPlayer.removeFromOwnership(adjCard);
+          }
+          else {
+            bluePlayer.removeFromOwnership(adjCard);
+          }
         }
       }
     }
+
   }
 
   /**
-   *
-   * @param name
-   * @return
+   * Returns the card based on the name given.
+   * @param name String of the name of the card
+   * @return the card given the name
+   * @throws IllegalArgumentException if the card is not found in the grid
    */
   private Card findCardByName(String name) {
     Cell[][] cells = grid.getCells();
@@ -164,6 +189,11 @@ public class ThreeTriosModel implements Model {
     throw new IllegalArgumentException("Card not found in grid: " + name);
   }
 
+  /**
+   * Returns the opposite direction given the direction.
+   * @param direction represents the Direction that to obtain the opposite of
+   * @return the opposite direction of the given direction
+   */
   private Direction getOppositeDirection(Direction direction) {
     switch (direction) {
       case NORTH:
@@ -210,6 +240,10 @@ public class ThreeTriosModel implements Model {
     return gameEnded;
   }
 
+  /**
+   * Determines if all the card cells on the grid has been filled.
+   * @return true if all card cells are filled, false otherwise
+   */
   private boolean allCardCellsFilled() {
     for (Cell[] row : grid.getCells()) {
       for (Cell cell : row) {
@@ -232,6 +266,9 @@ public class ThreeTriosModel implements Model {
     if (this.bluePlayer.getNumberCardsOwned() > this.redPlayer.getNumberCardsOwned()) {
       return "Blue Player";
     }
+    else if (this.bluePlayer.getNumberCardsOwned() == this.redPlayer.getNumberCardsOwned()) {
+      return "Tie";
+    }
     else {
       return "Red Player";
     }
@@ -247,7 +284,8 @@ public class ThreeTriosModel implements Model {
     return new HumanPlayer(this.currentPlayer.getCardsInHand(), this.currentPlayer.getColor());
   }
 
-  @Override public boolean hasStarted() {
+  @Override
+  public boolean hasStarted() {
     return started;
   }
 }

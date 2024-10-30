@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +87,8 @@ public class ThreeTriosModelTest {
     this.dogCard = new SimpleCard("dog", Value.NINE, Value.EIGHT, Value.SEVEN, Value.SIX);
     this.pigCard = new SimpleCard("pig", Value.ACE, Value.FOUR, Value.THREE, Value.TWO);
 
-    this.deck = List.of(ratCard, oxCard, tigerCard, rabbitCard, dragonCard, horseCard, goatCard, monkeyCard, roosterCard, dogCard);
+    this.deck = List.of(ratCard, oxCard, tigerCard, rabbitCard, dragonCard, horseCard, goatCard,
+            monkeyCard, roosterCard, dogCard);
 
     this.redHumanPlayer = new HumanPlayer(List.of(), Color.RED);
     this.blueHumanPlayer = new HumanPlayer(List.of(), Color.BLUE);
@@ -97,6 +99,7 @@ public class ThreeTriosModelTest {
             {false, false, false},
             {false, false, false}
     };
+
     this.gridWithNoHoles = new GameGrid(3, 3, noHolesLayout);
 
     boolean[][] holesLayout = {
@@ -124,11 +127,62 @@ public class ThreeTriosModelTest {
     Assert.assertEquals(redHumanPlayer.getColor(), hasSeededRandom.getCurrentPlayer().getColor());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  // when the deck size is incorrect
+  @Test (expected = IllegalArgumentException.class)
   public void testStartGameFailsDueToDeckSize() {
-    hasSeededRandom.startGame(List.of(ratCard, oxCard, tigerCard, rabbitCard, dragonCard, snakeCard), true, gridWithNoHoles);
+    hasSeededRandom.startGame(
+            List.of(ratCard, oxCard, tigerCard, rabbitCard, dragonCard, snakeCard),
+            true, gridWithNoHoles);
   }
 
+  // test gameStart when game has already been started
+  @Test (expected = IllegalStateException.class)
+  public void shouldThrowIllegalStateGameAlreadyStarted() {
+    this.hasSeededRandom.startGame(this.deck, true, this.gridWithNoHoles);
+    this.hasSeededRandom.startGame(this.deck, false, this.gridWithNoHoles);
+  }
+
+  // test when cards are null
+  @Test (expected = IllegalArgumentException.class)
+  public void shouldThrowIllegalArgumentCardsNull() {
+    this.hasSeededRandom.startGame(null, true, this.gridWithNoHoles);
+  }
+
+  // when the deck of cards is not unique
+  @Test (expected = IllegalArgumentException.class)
+  public void shouldThrowIllegalArgumentCardsNotUnique() {
+    List<Card> sampleDeck = List.of(this.ratCard, this.oxCard, this.tigerCard, this.rabbitCard,
+            this.dragonCard, this.horseCard, this.goatCard,
+            this.monkeyCard, this.roosterCard, this.ratCard);
+    this.hasSeededRandom.startGame(sampleDeck, true, this.gridWithNoHoles);
+  }
+
+  // test placingPhase method
+  // when the game has not started
+  @Test (expected = IllegalStateException.class)
+  public void shouldReturnIllegalStatePlacingPhaseGameNotStarted() {
+    this.hasSeededRandom.placingPhase(this.monkeyCard, 0, 0);
+  }
+
+  // when the game has ended
+  @Test (expected = IllegalStateException.class)
+  public void shouldReturnIllegalStatePlacingPhaseGameEnded() {
+    hasSeededRandom.startGame(deck, true, gridWithNoHoles);
+
+    hasSeededRandom.takeTurn(oxCard, 0, 1);
+    hasSeededRandom.takeTurn(ratCard, 0, 0);
+    hasSeededRandom.takeTurn(tigerCard, 1, 0);
+    hasSeededRandom.takeTurn(dragonCard, 0, 2);
+    hasSeededRandom.takeTurn(dogCard, 1, 2);
+    hasSeededRandom.takeTurn(horseCard, 1, 1);
+    hasSeededRandom.takeTurn(monkeyCard, 2, 1);
+    hasSeededRandom.takeTurn(goatCard, 2, 0);
+    hasSeededRandom.takeTurn(rabbitCard, 2, 2);
+
+    hasSeededRandom.placingPhase(horseCard, 0, 0);
+  }
+
+  // places a card
   @Test
   public void testPlacingPhase() {
     hasSeededRandom.startGame(deck, true, gridWithNoHoles);
@@ -137,15 +191,99 @@ public class ThreeTriosModelTest {
     Assert.assertEquals(oxCard, hasSeededRandom.getGrid().getCard(0, 0));
   }
 
+  // places a card when the card already exists in the same spot
+  @Test (expected = IllegalStateException.class)
+  public void testPlacingPhaseCardAlreadyExists() {
+    hasSeededRandom.startGame(deck, true, gridWithNoHoles);
+    hasSeededRandom.placingPhase(oxCard, 0, 0);
+    hasSeededRandom.placingPhase(tigerCard, 0, 0);
+  }
+
+  // places a card where there is a hole
+  @Test (expected = IllegalStateException.class)
+  public void shouldThrowIllegalStatePlacingPhaseHole() {
+    List<Card> sampleDeck = List.of(this.ratCard, this.oxCard, this.tigerCard, this.rabbitCard,
+            this.dragonCard, this.monkeyCard);
+    this.hasSeededRandom.startGame(sampleDeck, true, gridWithHoles);
+    this.hasSeededRandom.placingPhase(ratCard, 0, 1);
+  }
+
+  // test battlingPhase method
+  // when game has not started
+  @Test (expected = IllegalStateException.class)
+  public void testGameNotStartedBattling() {
+    this.hasSeededRandom.battlingPhase(0, 0);
+  }
+
+  // when the game has ended
+  @Test (expected = IllegalStateException.class)
+  public void shouldReturnIllegalStateBattlingGameEnded() {
+    hasSeededRandom.startGame(deck, true, gridWithNoHoles);
+
+    hasSeededRandom.takeTurn(oxCard, 0, 1);
+    hasSeededRandom.takeTurn(ratCard, 0, 0);
+    hasSeededRandom.takeTurn(tigerCard, 1, 0);
+    hasSeededRandom.takeTurn(dragonCard, 0, 2);
+    hasSeededRandom.takeTurn(dogCard, 1, 2);
+    hasSeededRandom.takeTurn(horseCard, 1, 1);
+    hasSeededRandom.takeTurn(monkeyCard, 2, 1);
+    hasSeededRandom.takeTurn(goatCard, 2, 0);
+    hasSeededRandom.takeTurn(rabbitCard, 2, 2);
+
+    hasSeededRandom.battlingPhase(0, 0);
+  }
+
+  // battling another card
   @Test
   public void testBattlingPhase() {
     hasSeededRandom.startGame(deck, true, gridWithNoHoles);
     hasSeededRandom.placingPhase(rabbitCard, 0, 0);
     hasSeededRandom.battlingPhase(0, 0);
 
-    Assert.assertEquals(rabbitCard.getColor(), hasSeededRandom.getGrid().getCard(0, 0).getColor());
+    Assert.assertEquals(rabbitCard.getColor(),
+            hasSeededRandom.getGrid().getCard(0, 0).getColor());
   }
 
+  // test takeTurn method
+  // when game has not started yet
+  @Test (expected = IllegalStateException.class)
+  public void shouldThrowIllegalStateTakeTurnGameNotStarted() {
+    this.hasSeededRandom.takeTurn(oxCard, 0, 1);
+  }
+
+  // when game has ended
+  @Test (expected = IllegalStateException.class)
+  public void shouldReturnIllegalStateTakeTurnGameEnded() {
+    hasSeededRandom.startGame(deck, true, gridWithNoHoles);
+
+    hasSeededRandom.takeTurn(oxCard, 0, 1);
+    hasSeededRandom.takeTurn(ratCard, 0, 0);
+    hasSeededRandom.takeTurn(tigerCard, 1, 0);
+    hasSeededRandom.takeTurn(dragonCard, 0, 2);
+    hasSeededRandom.takeTurn(dogCard, 1, 2);
+    hasSeededRandom.takeTurn(horseCard, 1, 1);
+    hasSeededRandom.takeTurn(monkeyCard, 2, 1);
+    hasSeededRandom.takeTurn(goatCard, 2, 0);
+    hasSeededRandom.takeTurn(rabbitCard, 2, 2);
+
+    hasSeededRandom.takeTurn(horseCard, 0, 0);
+  }
+
+  // when player does not have the card in hand
+  @Test (expected = IllegalArgumentException.class)
+  public void shouldReturnIllegalArgumentTakeTurnCardNotInHand() {
+    this.hasSeededRandom.startGame(deck, true, gridWithNoHoles);
+    this.hasSeededRandom.takeTurn(pigCard, 0, 1);
+  }
+
+  // when the move is invalid
+  @Test (expected = IllegalArgumentException.class)
+  public void shouldReturnIllegalArgumentTakeTurnInvalidMove() {
+    this.hasSeededRandom.startGame(deck, true, gridWithNoHoles);
+    this.hasSeededRandom.takeTurn(oxCard, 0, 5);
+  }
+
+  // takes a turn with a valid move
   @Test
   public void testTakeTurnWithValidMove() {
     hasSeededRandom.startGame(deck, true, gridWithNoHoles);
@@ -154,7 +292,14 @@ public class ThreeTriosModelTest {
     Assert.assertEquals(Color.RED, hasSeededRandom.getGrid().getCard(0, 0).getColor());
   }
 
-  // test isGameOver
+  // test isGameOver method
+  // tests when the game has not started but the method has been called
+  @Test (expected = IllegalStateException.class)
+  public void testIsGameOverException() {
+    this.hasSeededRandom.isGameOver();
+  }
+
+  // tests that GameOver returns true when game is over
   @Test
   public void testIsGameOver() {
     hasSeededRandom.startGame(deck, true, gridWithNoHoles);
@@ -173,11 +318,24 @@ public class ThreeTriosModelTest {
     Assert.assertTrue(hasSeededRandom.isGameOver());
   }
 
-  // test winner
-  @Test
-  public void testWinner() {
-    hasSeededRandom.startGame(deck, true, gridWithNoHoles);
+  // test winner method
+  // when the game has not started yet
+  @Test (expected = IllegalStateException.class)
+  public void shouldReturnIllegalStateWinnerGameNotStarted() {
+    this.hasSeededRandom.winner();
+  }
 
+  // when the game has not ended yet
+  @Test (expected = IllegalStateException.class)
+  public void shouldReturnIllegalStateWinnerGameNotEnded() {
+    this.hasSeededRandom.startGame(deck, true, gridWithNoHoles);
+    this.hasSeededRandom.winner();
+  }
+
+  // when there is a tie
+  @Test
+  public void shouldReturnTieWinner() {
+    hasSeededRandom.startGame(deck, true, gridWithNoHoles);
     hasSeededRandom.takeTurn(oxCard, 0, 1);
     hasSeededRandom.takeTurn(ratCard, 0, 0);
     hasSeededRandom.takeTurn(tigerCard, 1, 0);
@@ -188,7 +346,24 @@ public class ThreeTriosModelTest {
     hasSeededRandom.takeTurn(goatCard, 2, 0);
     hasSeededRandom.takeTurn(rabbitCard, 2, 2);
 
-    Assert.assertEquals("Red Player", hasSeededRandom.winner());
+    Assert.assertEquals("Tie", hasSeededRandom.winner());
+  }
+
+  // finds winner when there is a winner
+  @Test
+  public void testWinner() {
+    this.hasSeededRandom.startGame(this.deck, false, this.gridWithNoHoles);
+    this.hasSeededRandom.takeTurn(this.roosterCard, 0, 1);
+    this.hasSeededRandom.takeTurn(this.oxCard, 2, 2);
+    this.hasSeededRandom.takeTurn(this.dragonCard, 1, 2);
+    this.hasSeededRandom.takeTurn(this.horseCard, 0, 2);
+    this.hasSeededRandom.takeTurn(this.ratCard, 1, 0);
+    this.hasSeededRandom.takeTurn(this.rabbitCard, 2, 0);
+    this.hasSeededRandom.takeTurn(this.tigerCard, 2, 1);
+    this.hasSeededRandom.takeTurn(this.monkeyCard, 1, 1);
+    this.hasSeededRandom.takeTurn(this.goatCard, 0, 0);
+
+    Assert.assertEquals("Blue Player", this.hasSeededRandom.winner());
   }
 
   // test getGrid
@@ -244,25 +419,108 @@ public class ThreeTriosModelTest {
 
   // test the removeFromHand method
   // when the card does not exist in the hand
+  @Test (expected = IllegalArgumentException.class)
+  public void shouldThrowIllegalArgumentCardNotInHand(){
+    this.redHumanPlayer.removeFromHand(this.monkeyCard);
+  }
+
   // when the card exists in the hand
+  @Test
+  public void shouldRemoveFromHand() {
+    this.ratCard.createCardColor(Color.RED);
+    this.dragonCard.createCardColor(Color.RED);
+    Player newPlayer = new HumanPlayer(new ArrayList<>(List.of(this.ratCard, this.dragonCard)), Color.RED);
+    newPlayer.removeFromHand(this.ratCard);
+    Assert.assertEquals(1, newPlayer.getCardsInHand().size());
+  }
 
   // test the removeFromOwnership method
-  // when there is nothing to remove
+  // when the thing to remove is not in ownership
+  @Test (expected = IllegalArgumentException.class)
+  public void shouldThrowIllegalArgumentCardNotOwned() {
+    this.redHumanPlayer.removeFromOwnership(this.ratCard);
+  }
+
   // when there is something to remove
+  @Test
+  public void shouldRemoveFromOwnership() {
+    this.redHumanPlayer.addToOwnership(this.ratCard);
+    this.redHumanPlayer.addToOwnership(this.pigCard);
+    Assert.assertEquals(2, this.redHumanPlayer.getNumberCardsOwned());
+
+    this.redHumanPlayer.removeFromOwnership(this.ratCard);
+    Assert.assertEquals(1, this.redHumanPlayer.getNumberCardsOwned());
+  }
 
   // test the addToOwnerShip method
+  // adding a card
+  @Test
+  public void shouldAddCardsToOwnershipProperly() {
+    this.redHumanPlayer.addToOwnership(this.ratCard);
+    Assert.assertEquals(1, this.redHumanPlayer.getNumberCardsOwned());
+  }
 
   // test the getOwnedCardsOnBoard method
+  // when there are no cards owned on the board
+  @Test
+  public void shouldReturnEmptyOwnedCards() {
+    Assert.assertEquals(List.of(), this.blueHumanPlayer.getOwnedCardsOnGrid());
+  }
+
+  // when there are owned cards on the board
+  @Test
+  public void shouldReturnOwnedCards() {
+    this.blueHumanPlayer.addToOwnership(this.ratCard);
+    List<Card> expectedOwnedCards = List.of(this.ratCard, this.roosterCard);
+    Assert.assertEquals(expectedOwnedCards, this.blueHumanPlayer.getOwnedCardsOnGrid());
+  }
 
   // test the getCardsInHand method
+  @Test
+  public void shouldReturnCardsInHand() {
+    this.noSeededRandom.startGame(deck, false, gridWithNoHoles);
+    List<Card> expectedHand = List.of(this.ratCard, this.tigerCard, this.dragonCard,
+            this.goatCard, this.roosterCard);
+    Assert.assertEquals(expectedHand, this.noSeededRandom.getCurrentPlayer().getCardsInHand());
+  }
 
   // test the getNumberOwnedCards method
+  // when a card has been added to the grid
+  @Test
+  public void shouldReturnNumberOwnedCards() {
+    this.noSeededRandom.startGame(deck, false, gridWithNoHoles);
+    Player samplePlayer = this.noSeededRandom.getCurrentPlayer();
+    samplePlayer.addToOwnership(this.pigCard);
+    Assert.assertEquals(6, samplePlayer.getNumberCardsOwned());
+  }
+
+  // when no cards have been added to the grid
+  @Test
+  public void shouldReturnNumberOwnedCardsNoGridCards() {
+    this.noSeededRandom.startGame(deck, false, gridWithNoHoles);
+    Player samplePlayer = this.noSeededRandom.getCurrentPlayer();
+    Assert.assertEquals(5, samplePlayer.getNumberCardsOwned());
+  }
 
   // test the getColor method
+  // when the color is blue
+  @Test
+  public void shouldReturnBlue() {
+    Assert.assertEquals(this.blueHumanPlayer.getColor(), Color.BLUE);
+  }
 
-  // test the getAllOwnedCards method
+  // when the color is red
+  @Test
+  public void shouldReturnRed() {
+    Assert.assertEquals(this.redHumanPlayer.getColor(), Color.RED);
+  }
 
   // test the toString method
+  // print out a player
+  @Test
+  public void shouldReturnStringOfPlayer() {
+    Assert.assertEquals("Player: RED", this.redHumanPlayer.toString());
+  }
 
   // testing the SimpleCard class
   // exceptions to be thrown from constructor
@@ -446,8 +704,7 @@ public class ThreeTriosModelTest {
     Assert.assertEquals("goat A 6 4 7 ", result);
   }
 
-  // test GameGrid file
-
+  // test GameGrid
   // testing constructor enforcing no even number of card cells
   @Test(expected = IllegalArgumentException.class)
   public void testEvenCardCellCountThrowsException() {
@@ -599,13 +856,13 @@ public class ThreeTriosModelTest {
 
 
   // test GameCell file
-
   // test hasCard
   @Test
   public void testHasCardInitiallyFalse() {
     Assert.assertFalse(cellWithoutHole.hasCard());
   }
 
+  // after placing a card
   @Test
   public void testHasCardAfterPlacingCard() {
     cellWithoutHole.placeCard(goatCard);
@@ -619,12 +876,14 @@ public class ThreeTriosModelTest {
     Assert.assertEquals(goatCard, cellWithoutHole.getCard());
   }
 
+  // if the cell is occupied
   @Test(expected = IllegalStateException.class)
   public void testPlaceCardInOccupiedCell() {
     cellWithoutHole.placeCard(goatCard);
     cellWithoutHole.placeCard(goatCard);
   }
 
+  // trying to place a card in a hole cell
   @Test(expected = IllegalStateException.class)
   public void testPlaceCardInHoleCell() {
     cellWithHole.placeCard(goatCard);
@@ -638,6 +897,7 @@ public class ThreeTriosModelTest {
     Assert.assertFalse(cellWithoutHole.hasCard());
   }
 
+  // removing card from an empty cell
   @Test(expected = IllegalStateException.class)
   public void testRemoveCardFromEmptyCell() {
     cellWithoutHole.removeCard();
@@ -699,7 +959,7 @@ public class ThreeTriosModelTest {
   // test the createDeck method
   @Test
   public void createLessDeck() throws FileNotFoundException {
-    String path = ".idea/CardConfiguration/LessCards";
+    String path = "CS3500_HW5/.idea/CardConfiguration/LessCards";
     CardFileParser parser = new CardFileParser(path);
     List<Card> result = parser.createDeck();
 
@@ -721,13 +981,11 @@ public class ThreeTriosModelTest {
   }
 
 
-
   // testing the GridFileParser class
-
   // testing createGridFromFile from Disconnected file
   @Test
   public void testDisconnectedFile() throws FileNotFoundException {
-    File file = new File(".idea/GridConfiguration/Disconnected");
+    File file = new File("CS3500_HW5/.idea/GridConfiguration/Disconnected");
     GridFileParser parser = new GridFileParser(file);
     GameGrid result = parser.createGridFromFile();
 
@@ -747,7 +1005,7 @@ public class ThreeTriosModelTest {
   // testing createGridFromFile from HasHoles file
   @Test
   public void testHasHolesFile() throws FileNotFoundException {
-    File file = new File(".idea/GridConfiguration/HasHoles");
+    File file = new File("CS3500_HW5/.idea/GridConfiguration/HasHoles");
     GridFileParser parser = new GridFileParser(file);
     GameGrid result = parser.createGridFromFile();
 
@@ -767,7 +1025,7 @@ public class ThreeTriosModelTest {
   // testing createGridFromFile from NoHoles file
   @Test
   public void testNoHolesFile() throws FileNotFoundException {
-    File file = new File(".idea/GridConfiguration/NoHoles");
+    File file = new File("CS3500_HW5/.idea/GridConfiguration/NoHoles");
     GridFileParser parser = new GridFileParser(file);
     GameGrid result = parser.createGridFromFile();
 

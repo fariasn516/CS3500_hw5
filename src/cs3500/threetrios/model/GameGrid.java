@@ -3,12 +3,22 @@ package cs3500.threetrios.model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents the grid in a game of ThreeTrios.
+ */
 public class GameGrid implements Grid {
-  private final int numRows;
-  private final int numCols;
-  private final boolean[][] holeLayout;
-  private final Cell[][] grid;
+  private final int numRows; // represents the number of rows the grid has
+  private final int numCols; // represent the number of columns the grid has
+  private final boolean[][] holeLayout; // represents the layout of holes
+  private final Cell[][] grid; // represents the actual grid layout
 
+  /**
+   * Constructor for game grid, takes in the number of rows, columns,
+   * and a 2D array for hole layout.
+   * @param numRows represents the number of rows
+   * @param numCols represents the number of columns
+   * @param holeLayout represents the layout of the holes
+   */
   public GameGrid(int numRows, int numCols, boolean[][] holeLayout) {
     this.numRows = numRows;
     this.numCols = numCols;
@@ -32,6 +42,13 @@ public class GameGrid implements Grid {
     }
   }
 
+  /**
+   * Another constructor for the grid, takes in the number of rows and columns and a 2d array for
+   * the layout of cells
+   * @param numRows represents the number of rows
+   * @param numCols represents the number of columns
+   * @param grid represents the layout of the cells
+   */
   public GameGrid(int numRows, int numCols, Cell[][] grid) {
     this.numRows = numRows;
     this.numCols = numCols;
@@ -80,6 +97,7 @@ public class GameGrid implements Grid {
     return adjacentCardsWithDirections;
   }
 
+  @Override
   public int getCardCellCount() {
     int cardCellCount = 0;
     for (int row = 0; row < numRows; row++) {

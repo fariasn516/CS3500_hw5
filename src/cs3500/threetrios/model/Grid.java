@@ -1,8 +1,10 @@
 package cs3500.threetrios.model;
 
-import java.util.List;
 import java.util.Map;
 
+/**
+ * Interface that represents the grid for the game Three Trios.
+ */
 public interface Grid {
 
   /**
@@ -39,7 +41,7 @@ public interface Grid {
    *
    * @return the count of card cells within the grid.
    */
-  public int getCardCellCount();
+   int getCardCellCount();
 
   /**
    * Returns a copy of the grid as a 2D array of cells.
@@ -77,7 +79,7 @@ public interface Grid {
    *
    * @return a 2D boolean array where `true` indicates a hole and `false` indicates a card cell.
    */
-  public boolean[][] getHoleLayout();
+   boolean[][] getHoleLayout();
   
   /**
    * Converts the grid into a string representation.

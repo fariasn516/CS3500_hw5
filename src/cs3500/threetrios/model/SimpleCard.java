@@ -3,10 +3,13 @@ package cs3500.threetrios.model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class that represents the card that is used in the game Three Trios.
+ */
 public class SimpleCard implements Card {
-  private final String name;
-  private Color color;
-  private final Map<Direction, Value> cardValues;
+  private final String name; // represents the unique name of this card
+  private Color color; // represents the color of this card
+  private final Map<Direction, Value> cardValues; // represents the values of this card
 
     /**
      * Constructor for SimpleCard.
@@ -122,7 +125,7 @@ public class SimpleCard implements Card {
     if (this.color == Color.RED) {
       this.color = Color.BLUE;
     }
-    else {
+    else if (this.color == Color.BLUE) {
       this.color = Color.RED;
     }
   }

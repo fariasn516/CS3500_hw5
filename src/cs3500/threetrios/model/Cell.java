@@ -52,7 +52,6 @@ public interface Cell {
    *
    * @return a string representation of the cell.
    */
-
   String toString();
 }
 
