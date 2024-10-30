@@ -37,7 +37,7 @@ public class GridFileParser {
 
   private boolean[][] readHoleLayout(Scanner scanner, int numRows, int numCols) {
     boolean[][] holeLayout = new boolean[numRows][numCols];
-    int row = 1;
+    int row = 0;
 
     while (scanner.hasNextLine() && row < numRows) {
       String line = scanner.nextLine();
@@ -72,7 +72,7 @@ public class GridFileParser {
     if (cell == 'X') {
       return true;
     }
-    else if (cell == 'C') {
+    if (cell == 'C') {
       return false;
     }
     else {

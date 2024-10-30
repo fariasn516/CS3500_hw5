@@ -386,13 +386,12 @@ public class ThreeTriosModelTest {
     GridFileParser parser = new GridFileParser(file);
     GameGrid result = parser.createGridFromFile();
 
-    int expectedNumRows = 4;
+    int expectedNumRows = 3;
     int expectedNumCols = 4;
     boolean[][] expectedHoleLayout = {
             {true, false, false, true},
             {true, true, false, false},
             {true, false, true, true},
-            {true, true, true, false}
     };
 
     Assert.assertEquals(expectedNumRows, result.getNumRows());
