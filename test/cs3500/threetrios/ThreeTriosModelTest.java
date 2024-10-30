@@ -26,6 +26,9 @@ import cs3500.threetrios.model.SimpleCard;
 import cs3500.threetrios.model.ThreeTriosModel;
 import cs3500.threetrios.model.Value;
 
+/**
+ * Class that contains all testing that has to do with the model.
+ */
 public class ThreeTriosModelTest {
   // models
   Model hasSeededRandom;
@@ -56,12 +59,6 @@ public class ThreeTriosModelTest {
   SimpleCard pigCard;
 
   List<SimpleCard> deck;
-
-  // CardFileParsers
-  CardFileParser fileParser;
-
-  // GridFileParsers
-  GridFileParser gridFileParser;
 
   @Before
   public void init() {
@@ -399,7 +396,7 @@ public class ThreeTriosModelTest {
 
   // when color is null
   @Test (expected = IllegalArgumentException.class)
-  public void shouldThrowIllegalArgumentColorNull(){
+  public void shouldThrowIllegalArgumentColorNull() {
     this.monkeyCard.createCardColor(Color.RED);
     this.dragonCard.createCardColor(Color.RED);
     List<Card> cards = List.of(this.monkeyCard, this.dragonCard);
@@ -409,7 +406,7 @@ public class ThreeTriosModelTest {
 
   // when not all cards adhere to the player's color
   @Test (expected = IllegalArgumentException.class)
-  public void shouldThrowIllegalArgumentHandNotCorrectColor(){
+  public void shouldThrowIllegalArgumentHandNotCorrectColor() {
     this.monkeyCard.createCardColor(Color.RED);
     this.dragonCard.createCardColor(Color.BLUE);
     List<Card> cards = List.of(this.monkeyCard, this.dragonCard);
@@ -420,7 +417,7 @@ public class ThreeTriosModelTest {
   // test the removeFromHand method
   // when the card does not exist in the hand
   @Test (expected = IllegalArgumentException.class)
-  public void shouldThrowIllegalArgumentCardNotInHand(){
+  public void shouldThrowIllegalArgumentCardNotInHand() {
     this.redHumanPlayer.removeFromHand(this.monkeyCard);
   }
 
@@ -429,7 +426,8 @@ public class ThreeTriosModelTest {
   public void shouldRemoveFromHand() {
     this.ratCard.createCardColor(Color.RED);
     this.dragonCard.createCardColor(Color.RED);
-    Player newPlayer = new HumanPlayer(new ArrayList<>(List.of(this.ratCard, this.dragonCard)), Color.RED);
+    Player newPlayer = new HumanPlayer(
+            new ArrayList<>(List.of(this.ratCard, this.dragonCard)), Color.RED);
     newPlayer.removeFromHand(this.ratCard);
     Assert.assertEquals(1, newPlayer.getCardsInHand().size());
   }
@@ -848,9 +846,9 @@ public class ThreeTriosModelTest {
     horseCard.createCardColor(Color.RED);
     gridWithNoHoles.placeCard(dogCard, 0, 0);
     gridWithNoHoles.placeCard(horseCard, 2, 2);
-    String expected = "B__\n" +
-            "___\n" +
-            "__R\n";
+    String expected = "B__\n"
+            + "___\n"
+            + "__R\n";
     Assert.assertEquals(expected, gridWithNoHoles.toString());
   }
 
@@ -959,7 +957,7 @@ public class ThreeTriosModelTest {
   // test the createDeck method
   @Test
   public void createLessDeck() throws FileNotFoundException {
-    String path = "CS3500_HW5/.idea/CardConfiguration/LessCards";
+    String path = "CS3500_HW5/configurationFiles/CardConfiguration/LessCards";
     CardFileParser parser = new CardFileParser(path);
     List<Card> result = parser.createDeck();
 
@@ -985,7 +983,7 @@ public class ThreeTriosModelTest {
   // testing createGridFromFile from Disconnected file
   @Test
   public void testDisconnectedFile() throws FileNotFoundException {
-    File file = new File("CS3500_HW5/.idea/GridConfiguration/Disconnected");
+    File file = new File("CS3500_HW5/configurationFiles/GridConfiguration/Disconnected");
     GridFileParser parser = new GridFileParser(file);
     GameGrid result = parser.createGridFromFile();
 
@@ -1005,7 +1003,7 @@ public class ThreeTriosModelTest {
   // testing createGridFromFile from HasHoles file
   @Test
   public void testHasHolesFile() throws FileNotFoundException {
-    File file = new File("CS3500_HW5/.idea/GridConfiguration/HasHoles");
+    File file = new File("CS3500_HW5/configurationFiles/GridConfiguration/HasHoles");
     GridFileParser parser = new GridFileParser(file);
     GameGrid result = parser.createGridFromFile();
 
@@ -1025,7 +1023,7 @@ public class ThreeTriosModelTest {
   // testing createGridFromFile from NoHoles file
   @Test
   public void testNoHolesFile() throws FileNotFoundException {
-    File file = new File("CS3500_HW5/.idea/GridConfiguration/NoHoles");
+    File file = new File("CS3500_HW5/configurationFiles/GridConfiguration/NoHoles");
     GridFileParser parser = new GridFileParser(file);
     GameGrid result = parser.createGridFromFile();
 

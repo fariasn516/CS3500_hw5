@@ -44,7 +44,7 @@ public class GameGrid implements Grid {
 
   /**
    * Another constructor for the grid, takes in the number of rows and columns and a 2d array for
-   * the layout of cells
+   * the layout of cells.
    * @param numRows represents the number of rows
    * @param numCols represents the number of columns
    * @param grid represents the layout of the cells
@@ -112,7 +112,7 @@ public class GameGrid implements Grid {
 
   @Override
   public int getNumRows() {
-   return this.numRows;
+    return this.numRows;
   }
 
   @Override

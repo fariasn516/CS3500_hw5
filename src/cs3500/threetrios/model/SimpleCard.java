@@ -11,10 +11,10 @@ public class SimpleCard implements Card {
   private Color color; // represents the color of this card
   private final Map<Direction, Value> cardValues; // represents the values of this card
 
-    /**
-     * Constructor for SimpleCard.
-     * @param cardValues represents the Value that this card has at each Direction
-     */
+  /**
+   * Constructor for SimpleCard.
+   * @param cardValues represents the Value that this card has at each Direction
+   */
   public SimpleCard(String name, Map<Direction, Value> cardValues) {
     if (cardValues == null) {
       throw new IllegalArgumentException("Values cannot be null");
@@ -29,7 +29,14 @@ public class SimpleCard implements Card {
     this.cardValues = cardValues;
   }
 
-  public SimpleCard(String name, Color color,Map<Direction, Value> cardValues) {
+  /**
+   * Another constructor for SimpleCard that takes in the name of the card, its color,
+   * and a map of its directions and values.
+   * @param name represents the name of this card
+   * @param color represents the color of this card
+   * @param cardValues represents the values this card has
+   */
+  public SimpleCard(String name, Color color, Map<Direction, Value> cardValues) {
     if (cardValues == null) {
       throw new IllegalArgumentException("Values cannot be null");
     }
@@ -173,8 +180,8 @@ public class SimpleCard implements Card {
       return false;
     }
     for (Direction direction : Direction.values()) {
-      if (!(getValueFromDirection(direction)
-              == ((SimpleCard) obj).getValueFromDirection(direction))) {
+      if (getValueFromDirection(direction)
+              != ((SimpleCard) obj).getValueFromDirection(direction)) {
         return false;
       }
     }

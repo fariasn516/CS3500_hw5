@@ -1,7 +1,7 @@
 package cs3500.threetrios.model;
 
 /**
- * Represents the cards that is going to be played with in the
+ * Represents the cards that is going to be played with in the game.
  */
 public interface Card {
 
@@ -29,7 +29,7 @@ public interface Card {
 
   // Below are OBSERVATIONS
   /**
-   * Returns the Value at the given Direction
+   * Returns the Value at the given Direction.
    * @param direction represents the direction that you want the value from
    * @return the Value at the given Direction
    */

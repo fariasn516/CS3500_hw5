@@ -41,7 +41,7 @@ public interface Grid {
    *
    * @return the count of card cells within the grid.
    */
-   int getCardCellCount();
+  int getCardCellCount();
 
   /**
    * Returns a copy of the grid as a 2D array of cells.
@@ -63,6 +63,7 @@ public interface Grid {
    * @return the number of columns.
    */
   int getNumCols();
+
   /**
    * Returns the card at the specified position on the grid.
    *
@@ -79,7 +80,7 @@ public interface Grid {
    *
    * @return a 2D boolean array where `true` indicates a hole and `false` indicates a card cell.
    */
-   boolean[][] getHoleLayout();
+  boolean[][] getHoleLayout();
   
   /**
    * Converts the grid into a string representation.

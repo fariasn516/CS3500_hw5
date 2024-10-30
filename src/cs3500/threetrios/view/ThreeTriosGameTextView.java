@@ -42,7 +42,7 @@ public class ThreeTriosGameTextView implements ThreeTriosGameView {
     this.output = output;
   }
 
- @Override
+  @Override
   public void render() throws IOException {
     if (output == null) {
       throw new IllegalArgumentException("No Appendable provided for rendering.");

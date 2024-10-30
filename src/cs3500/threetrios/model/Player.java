@@ -2,6 +2,9 @@ package cs3500.threetrios.model;
 
 import java.util.List;
 
+/**
+ * Represents the player for the game Three Trios.
+ */
 public interface Player {
   /**
    * Removes the specified card from the player's hand.

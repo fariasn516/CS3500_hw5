@@ -84,7 +84,7 @@ public class ThreeTriosModel implements Model {
 
   /**
    * Determines if the number of cards adheres to the game's rules (ie one more than the number of
-   * card cells in the grid)
+   * card cells in the grid).
    * @param cards represents the list of cards in the game
    * @param grid represents the grid in the game
    * @return true if the number of cards is correct and false otherwise
@@ -277,7 +277,9 @@ public class ThreeTriosModel implements Model {
 
   @Override
   public Grid getGrid() {
-    return new GameGrid(this.grid.getNumRows(), this.grid.getNumCols(), this.grid.getCells());
+    Grid newGrid;
+    newGrid = this.grid;
+    return newGrid;
   }
 
   @Override

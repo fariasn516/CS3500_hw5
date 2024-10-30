@@ -13,6 +13,9 @@ import cs3500.threetrios.view.ThreeTriosGameTextView;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Tests everything related to the view.
+ */
 public class ThreeTriosTextViewTest {
   private ThreeTriosModel model;
   private ThreeTriosGameTextView view;
@@ -60,7 +63,8 @@ public class ThreeTriosTextViewTest {
     String expectedView = "Player: BLUE\n" +
             "Grid:\n" + model.getGrid().toString() +
             "Hand:\n" +
-            "ox 2 4 4 4 \n";
+            "ox 2 4 4 4 \n" +
+            "tiger 3 4 5 6 \n";
     assertEquals(expectedView, view.toString());
   }
 
@@ -71,7 +75,7 @@ public class ThreeTriosTextViewTest {
 
     String expectedView = "Player: RED\n" +
             "Grid:\n" +
-            "R \n" +
+            "B \n" +
             "B_\n" +
             "Hand:\n" +
             "rabbit 9 8 7 6 \n";
@@ -88,7 +92,8 @@ public class ThreeTriosTextViewTest {
             "R \n" +
             "__\n" +
             "Hand:\n" +
-            "ox 2 4 4 4 \n";
+            "ox 2 4 4 4 \n" +
+            "tiger 3 4 5 6 \n";
     assertEquals(expectedView, view.toString());
   }
 
@@ -100,11 +105,11 @@ public class ThreeTriosTextViewTest {
 
     String expectedView = "Player: RED\n" +
             "Grid:\n" +
-            "R \n" +
-            "BR\n" +
+            "B \n" +
+            "RR\n" +
             "Hand:\n";
     assertEquals(expectedView, view.toString());
-    assertEquals("Red Player", model.winner());
+    assertEquals("Tie", model.winner());
   }
 
 
