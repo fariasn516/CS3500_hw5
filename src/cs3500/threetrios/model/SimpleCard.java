@@ -8,10 +8,10 @@ public class SimpleCard implements Card {
   private Color color;
   private final Map<Direction, Value> cardValues;
 
-  /**
-   * Constructor for SimpleCard.
-   * @param cardValues represents the Value that this card has at each Direction
-   */
+    /**
+     * Constructor for SimpleCard.
+     * @param cardValues represents the Value that this card has at each Direction
+     */
   public SimpleCard(String name, Map<Direction, Value> cardValues) {
     if (cardValues == null) {
       throw new IllegalArgumentException("Values cannot be null");
@@ -23,6 +23,22 @@ public class SimpleCard implements Card {
       throw new IllegalArgumentException("All directions must be accounted for");
     }
     this.name = name;
+    this.cardValues = cardValues;
+  }
+
+  public SimpleCard(String name, Color color,Map<Direction, Value> cardValues) {
+    if (cardValues == null) {
+      throw new IllegalArgumentException("Values cannot be null");
+    }
+    if (name == null) {
+      throw new IllegalArgumentException("Name cannot be null");
+    }
+    if (!validValues(cardValues)) {
+      throw new IllegalArgumentException("All directions must be accounted for");
+    }
+
+    this.name = name;
+    this.color = color;
     this.cardValues = cardValues;
   }
 
@@ -134,7 +150,7 @@ public class SimpleCard implements Card {
 
   @Override
   public Card copy() {
-    return new SimpleCard(this.name, this.cardValues);
+    return new SimpleCard(this.name, this.color, this.cardValues);
   }
 
   @Override

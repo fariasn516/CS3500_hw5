@@ -35,7 +35,7 @@ public class ThreeTriosModel implements Model {
   }
 
   @Override
-  public void startGame(List<Card> cards, boolean shuffle, Grid grid) {
+  public <C extends Card> void startGame(List<C> cards, boolean shuffle, Grid grid) {
     if (started) {
       throw new IllegalStateException("Game already started!");
     }
@@ -48,14 +48,12 @@ public class ThreeTriosModel implements Model {
     if (allCardsNotUnique(cards)) {
       throw new IllegalArgumentException("Cards must be unique!");
     }
-    if (hasEvenCardCells(grid)) {
-      throw new IllegalArgumentException("Grid must have an odd number of card cells.");
-    }
     if (invalidCardCount(cards, grid)) {
       throw new IllegalArgumentException("Card count must be one more than card cell count.");
     }
 
     if (shuffle) {
+      cards = new ArrayList<>(cards);
       Collections.shuffle(cards, this.rand);
     }
     this.started = true;
@@ -70,7 +68,7 @@ public class ThreeTriosModel implements Model {
    * @param cards represents the list of cards that is attempting to be used as the deck
    * @return true if all cards have a unique identifier, and false if not
    */
-  private boolean allCardsNotUnique(List<Card> cards) {
+  private <C extends Card> boolean allCardsNotUnique(List<C> cards) {
     for (int i = 0; i < cards.size() - 1; i++) {
       for (int j = i + 1; j < cards.size(); j++) {
         if (cards.get(i).getName().equals(cards.get(j).getName())) {
@@ -83,20 +81,11 @@ public class ThreeTriosModel implements Model {
 
   /**
    *
-   * @param grid
-   * @return
-   */
-  private boolean hasEvenCardCells(Grid grid) {
-    return grid.getCardCellCount() % 2 == 0;
-  }
-
-  /**
-   *
    * @param cards
    * @param grid
    * @return
    */
-  private boolean invalidCardCount(List<Card> cards, Grid grid) {
+  private <C extends Card> boolean invalidCardCount(List<C> cards, Grid grid) {
     return cards.size() != grid.getCardCellCount() + 1;
   }
 
@@ -105,21 +94,22 @@ public class ThreeTriosModel implements Model {
    *
    * @param cards represent the deck of cards to be dealt
    */
-  private void dealCards(List<Card> cards) {
-    List<Card> blueHand = new ArrayList<>();
+  private <C extends Card> void dealCards(List<C> cards) {
     List<Card> redHand = new ArrayList<>();
+    List<Card> blueHand = new ArrayList<>();
     for (int allCards = 0; allCards < cards.size() - 1; allCards++) {
       if (allCards % 2 == 0) {
-        cards.get(allCards).createCardColor(Color.BLUE);
-        blueHand.add(cards.get(allCards));
-      } else {
         cards.get(allCards).createCardColor(Color.RED);
         redHand.add(cards.get(allCards));
+      } else {
+        cards.get(allCards).createCardColor(Color.BLUE);
+        blueHand.add(cards.get(allCards));
       }
     }
 
-    this.bluePlayer = new HumanPlayer(blueHand, Color.BLUE);
     this.redPlayer = new HumanPlayer(redHand, Color.RED);
+    this.bluePlayer = new HumanPlayer(blueHand, Color.BLUE);
+
   }
 
   @Override
@@ -255,5 +245,9 @@ public class ThreeTriosModel implements Model {
   @Override
   public Player getCurrentPlayer() {
     return new HumanPlayer(this.currentPlayer.getCardsInHand(), this.currentPlayer.getColor());
+  }
+
+  @Override public boolean hasStarted() {
+    return started;
   }
 }

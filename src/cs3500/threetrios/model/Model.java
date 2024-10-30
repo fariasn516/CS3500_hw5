@@ -15,7 +15,7 @@ public interface Model {
    * @throws IllegalArgumentException if the cards list is null, grid has an even number of card
    *                                  cells, or the number of cards is incorrect.
    */
-  public void startGame(List<Card> cards, boolean shuffle, Grid grid);
+  public <C extends Card> void startGame(List<C> cards, boolean shuffle, Grid grid);
 
   /**
    * Plays the placing phase of the turn by placing a card on the specified grid cell.
@@ -80,5 +80,11 @@ public interface Model {
    * @return the current player
    */
   public Player getCurrentPlayer();
+
+  /**
+   *
+   * @return if the game has started
+   */
+  public boolean hasStarted();
 
 }

@@ -55,7 +55,7 @@ public class ThreeTriosGameTextView implements ThreeTriosGameView {
     StringBuilder gameState = new StringBuilder();
 
     gameState.append(renderCurrentPlayer()).append("\n");
-    gameState.append(renderGrid()).append("\n");
+    gameState.append(renderGrid());
     gameState.append(renderHand());
     return gameState.toString();
   }
@@ -75,7 +75,9 @@ public class ThreeTriosGameTextView implements ThreeTriosGameView {
    * @return the string representation of the current grid state.
    */
   private String renderGrid() {
-    return model.getGrid().toString();
+    StringBuilder gridState = new StringBuilder("Grid:\n");
+    gridState.append(model.getGrid().toString());
+    return gridState.toString();
   }
 
   /**

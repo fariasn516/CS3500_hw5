@@ -3,17 +3,18 @@ package cs3500.threetrios;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Random;
 import cs3500.threetrios.model.Card;
 import cs3500.threetrios.model.CardFileParser;
+import cs3500.threetrios.model.Cell;
 import cs3500.threetrios.model.Color;
 import cs3500.threetrios.model.Direction;
+import cs3500.threetrios.model.GameCell;
 import cs3500.threetrios.model.GameGrid;
 import cs3500.threetrios.model.Grid;
 import cs3500.threetrios.model.GridFileParser;
@@ -33,23 +34,27 @@ public class ThreeTriosModelTest {
   Player redHumanPlayer;
   Player blueHumanPlayer;
 
+  GameCell cellWithHole;
+  GameCell cellWithoutHole;
   // some grids
   Grid gridWithNoHoles;
   Grid gridWithHoles;
 
   // some cards
-  Card ratCard;
-  Card oxCard;
-  Card tigerCard;
-  Card rabbitCard;
-  Card dragonCard;
-  Card snakeCard;
-  Card horseCard;
-  Card goatCard;
-  Card monkeyCard;
-  Card roosterCard;
-  Card dogCard;
-  Card pigCard;
+  SimpleCard ratCard;
+  SimpleCard oxCard;
+  SimpleCard tigerCard;
+  SimpleCard rabbitCard;
+  SimpleCard dragonCard;
+  SimpleCard snakeCard;
+  SimpleCard horseCard;
+  SimpleCard goatCard;
+  SimpleCard monkeyCard;
+  SimpleCard roosterCard;
+  SimpleCard dogCard;
+  SimpleCard pigCard;
+
+  List<SimpleCard> deck;
 
   // CardFileParsers
   CardFileParser fileParser;
@@ -59,6 +64,13 @@ public class ThreeTriosModelTest {
 
   @Before
   public void init() {
+    // initializing models with seeded and non-seeded randoms
+    this.hasSeededRandom = new ThreeTriosModel(new Random(47));
+    this.noSeededRandom = new ThreeTriosModel();
+
+    cellWithHole = new GameCell(true);
+    cellWithoutHole = new GameCell(false);
+
     // initializing cards
     this.ratCard = new SimpleCard("rat", Value.ACE, Value.ONE, Value.TWO, Value.THREE);
     this.oxCard = new SimpleCard("ox", Value.ACE, Value.ONE, Value.TWO, Value.THREE);
@@ -73,6 +85,26 @@ public class ThreeTriosModelTest {
     this.roosterCard = new SimpleCard("rooster", Value.ONE, Value.ONE, Value.ONE, Value.ONE);
     this.dogCard = new SimpleCard("dog", Value.NINE, Value.EIGHT, Value.SEVEN, Value.SIX);
     this.pigCard = new SimpleCard("pig", Value.ACE, Value.FOUR, Value.THREE, Value.TWO);
+
+    this.deck = List.of(ratCard, oxCard, tigerCard, rabbitCard, dragonCard, horseCard, goatCard, monkeyCard, roosterCard, dogCard);
+
+    this.redHumanPlayer = new HumanPlayer(List.of(), Color.RED);
+    this.blueHumanPlayer = new HumanPlayer(List.of(), Color.BLUE);
+
+    // initializing grids
+    boolean[][] noHolesLayout = {
+            {false, false, false},
+            {false, false, false},
+            {false, false, false}
+    };
+    this.gridWithNoHoles = new GameGrid(3, 3, noHolesLayout);
+
+    boolean[][] holesLayout = {
+            {false, true, false},
+            {true, false, true},
+            {false, true, false}
+    };
+    this.gridWithHoles = new GameGrid(3, 3, holesLayout);
   }
 
   // testing the model
@@ -83,33 +115,110 @@ public class ThreeTriosModelTest {
     Model model = new ThreeTriosModel(null);
   }
 
-  // test the startGame method
+  // testing game start with a seeded random
+  @Test
+  public void testStartGameWithSeededRandom() {
+    hasSeededRandom.startGame(deck, true, gridWithNoHoles);
+    Assert.assertTrue(hasSeededRandom.hasStarted());
+    Assert.assertEquals(hasSeededRandom.getGrid(), this.gridWithNoHoles);
+    Assert.assertEquals(redHumanPlayer.getColor(), hasSeededRandom.getCurrentPlayer().getColor());
+  }
 
-  // test the placingPhase method
+  @Test(expected = IllegalArgumentException.class)
+  public void testStartGameFailsDueToDeckSize() {
+    hasSeededRandom.startGame(List.of(ratCard, oxCard, tigerCard, rabbitCard, dragonCard, snakeCard), true, gridWithNoHoles);
+  }
 
-  // test the battlingPhase method
+  @Test
+  public void testPlacingPhase() {
+    hasSeededRandom.startGame(deck, true, gridWithNoHoles);
+    hasSeededRandom.placingPhase(oxCard, 0, 0);
+    Assert.assertTrue(hasSeededRandom.getGrid().getCells()[0][0].hasCard());
+    Assert.assertEquals(oxCard, hasSeededRandom.getGrid().getCard(0, 0));
+  }
 
-  // test the findCardByName method
+  @Test
+  public void testBattlingPhase() {
+    hasSeededRandom.startGame(deck, true, gridWithNoHoles);
+    hasSeededRandom.placingPhase(rabbitCard, 0, 0);
+    hasSeededRandom.battlingPhase(0, 0);
 
-  // test the getOppositeDirection method
+    Assert.assertEquals(rabbitCard.getColor(), hasSeededRandom.getGrid().getCard(0, 0).getColor());
+  }
 
-  // test the takeTurn method
+  @Test
+  public void testTakeTurnWithValidMove() {
+    hasSeededRandom.startGame(deck, true, gridWithNoHoles);
+    hasSeededRandom.takeTurn(oxCard, 0, 0);
+    Assert.assertTrue(hasSeededRandom.getGrid().getCells()[0][0].hasCard());
+    Assert.assertEquals(Color.RED, hasSeededRandom.getGrid().getCard(0, 0).getColor());
+  }
 
-  // test the isGameOver method
+  // test isGameOver
+  @Test
+  public void testIsGameOver() {
+    hasSeededRandom.startGame(deck, true, gridWithNoHoles);
+    Assert.assertFalse(hasSeededRandom.isGameOver());
 
-  // test the winner method
+    hasSeededRandom.takeTurn(oxCard, 0, 1);
+    hasSeededRandom.takeTurn(ratCard, 0, 0);
+    hasSeededRandom.takeTurn(tigerCard, 1, 0);
+    hasSeededRandom.takeTurn(dragonCard, 0, 2);
+    hasSeededRandom.takeTurn(dogCard, 1, 2);
+    hasSeededRandom.takeTurn(horseCard, 1, 1);
+    hasSeededRandom.takeTurn(monkeyCard, 2, 1);
+    hasSeededRandom.takeTurn(goatCard, 2, 0);
+    hasSeededRandom.takeTurn(rabbitCard, 2, 2);
 
-  // test the getGrid method
+    Assert.assertTrue(hasSeededRandom.isGameOver());
+  }
 
-  // test the getCurrentPlayer method
+  // test winner
+  @Test
+  public void testWinner() {
+    hasSeededRandom.startGame(deck, true, gridWithNoHoles);
 
+    hasSeededRandom.takeTurn(oxCard, 0, 1);
+    hasSeededRandom.takeTurn(ratCard, 0, 0);
+    hasSeededRandom.takeTurn(tigerCard, 1, 0);
+    hasSeededRandom.takeTurn(dragonCard, 0, 2);
+    hasSeededRandom.takeTurn(dogCard, 1, 2);
+    hasSeededRandom.takeTurn(horseCard, 1, 1);
+    hasSeededRandom.takeTurn(monkeyCard, 2, 1);
+    hasSeededRandom.takeTurn(goatCard, 2, 0);
+    hasSeededRandom.takeTurn(rabbitCard, 2, 2);
+
+    Assert.assertEquals("Red Player", hasSeededRandom.winner());
+  }
+
+  // test getGrid
+  @Test
+  public void testGetGrid() {
+    hasSeededRandom.startGame(deck, true, gridWithNoHoles);
+    Assert.assertEquals(gridWithNoHoles, hasSeededRandom.getGrid());
+  }
+
+  // test getCurrentPlayer
+  @Test
+  public void testGetCurrentPlayer() {
+    hasSeededRandom.startGame(deck, true, gridWithNoHoles);
+    Assert.assertEquals(redHumanPlayer.getColor(), hasSeededRandom.getCurrentPlayer().getColor());
+  }
+
+  // test hasStarted
+  @Test
+  public void testHasStarted() {
+    Assert.assertFalse(hasSeededRandom.hasStarted());
+    hasSeededRandom.startGame(deck, true, gridWithNoHoles);
+    Assert.assertTrue(hasSeededRandom.hasStarted());
+  }
 
 
   // testing the HumanPlayer class
   // exceptions to be thrown
   // when cards in hand is null
   @Test (expected = IllegalArgumentException.class)
-  public void shouldThrowIllegalArgumentHandNull(){
+  public void shouldThrowIllegalArgumentHandNull() {
     Player newPlayer = new HumanPlayer(null, Color.RED);
   }
 
@@ -154,17 +263,6 @@ public class ThreeTriosModelTest {
   // test the getAllOwnedCards method
 
   // test the toString method
-
-
-
-  // testing the GameGrid class
-  // exceptions to be thrown
-
-
-  // testing the GameCell class
-  // exceptions to be thrown from constructor
-
-
 
   // testing the SimpleCard class
   // exceptions to be thrown from constructor
@@ -348,6 +446,253 @@ public class ThreeTriosModelTest {
     Assert.assertEquals("goat A 6 4 7 ", result);
   }
 
+  // test GameGrid file
+
+  // testing constructor enforcing no even number of card cells
+  @Test(expected = IllegalArgumentException.class)
+  public void testEvenCardCellCountThrowsException() {
+    boolean[][] evenHoleLayout = {
+            {false, true},
+            {true, false}
+    };
+    new GameGrid(2, 2, evenHoleLayout);
+  }
+
+  // test placeCard
+  @Test
+  public void testPlaceCardOnEmptyCell() {
+    gridWithNoHoles.placeCard(goatCard, 0, 0);
+    Assert.assertEquals(goatCard, gridWithNoHoles.getCard(0, 0));
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testPlaceCardOnHole() {
+    gridWithHoles.placeCard(goatCard, 0, 1);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testPlaceCardOnOccupiedCell() {
+    gridWithNoHoles.placeCard(ratCard, 1, 1);
+    gridWithNoHoles.placeCard(tigerCard, 1, 1);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testPlaceCardOnOutOfBoundsCellOnGrid() {
+    gridWithNoHoles.placeCard(ratCard, 7, 10);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testPlaceCardOnHoleCell() {
+    gridWithHoles.placeCard(ratCard, 0, 1);
+  }
+
+  // test validCell
+  @Test
+  public void testValidCellOnEmptyCell() {
+    Assert.assertTrue(gridWithNoHoles.validCell(0, 0));
+  }
+
+  @Test
+  public void testValidCellOnHole() {
+    Assert.assertFalse(gridWithHoles.validCell(0, 1));
+  }
+
+  @Test
+  public void testValidCellOnOccupiedCell() {
+    gridWithNoHoles.placeCard(rabbitCard, 2, 2);
+    Assert.assertFalse(gridWithNoHoles.validCell(2, 2));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testPlaceCardOnOutOfBoundsCell() {
+    gridWithNoHoles.placeCard(rabbitCard, 6, 3);
+  }
+
+  // test getAdjacentCardsWithDirections
+  @Test
+  public void testGetAdjacentCardsWithDirections() {
+    gridWithNoHoles.placeCard(horseCard, 1, 1);
+    gridWithNoHoles.placeCard(dragonCard, 1, 2);
+
+    var adjacentCards = gridWithNoHoles.getAdjacentCardsWithDirections(1, 1);
+    Assert.assertEquals(1, adjacentCards.size());
+    Assert.assertTrue(adjacentCards.containsKey("dragon"));
+    Assert.assertEquals(Direction.EAST, adjacentCards.get("dragon"));
+  }
+
+  // test getCardCellCount
+  @Test
+  public void testGetCardCellCountWithHoles() {
+    Assert.assertEquals(5, gridWithHoles.getCardCellCount());
+  }
+
+  @Test
+  public void testGetCardCellCountNoHoles() {
+    Assert.assertEquals(9, gridWithNoHoles.getCardCellCount());
+  }
+
+  // test getCells
+  @Test
+  public void testGetCellsReturnsCorrectGrid() {
+    Cell[][] cells = gridWithNoHoles.getCells();
+    Assert.assertEquals(3, cells.length);
+    Assert.assertEquals(3, cells[0].length);
+  }
+
+  // test getNumRows
+  @Test
+  public void testGetNumRows() {
+    Assert.assertEquals(3, gridWithNoHoles.getNumRows());
+  }
+
+  // test getNumCols
+  @Test
+  public void testGetNumCols() {
+    Assert.assertEquals(3, gridWithNoHoles.getNumCols());
+  }
+
+  // test getCard
+  @Test
+  public void testGetCard() {
+    gridWithNoHoles.placeCard(pigCard, 2, 2);
+    Assert.assertEquals(pigCard, gridWithNoHoles.getCard(2, 2));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testGetCardFromHoleOnGrid() {
+    gridWithHoles.getCard(0, 1);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testGetCardFromEmptyCellOnGrid() {
+    gridWithNoHoles.getCard(0, 0);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testGetCardFromOutOfBoundsCellOnGrid() {
+    gridWithNoHoles.getCard(11, 9);
+  }
+
+  // test getHoleLayout
+  @Test
+  public void testGetHoleLayout() {
+    boolean[][] expectedLayout = {
+            {false, true, false},
+            {true, false, true},
+            {false, true, false}
+    };
+    Assert.assertArrayEquals(expectedLayout, gridWithHoles.getHoleLayout());
+  }
+
+  // test toString
+  @Test
+  public void testToStringGrid() {
+    dogCard.createCardColor(Color.BLUE);
+    horseCard.createCardColor(Color.RED);
+    gridWithNoHoles.placeCard(dogCard, 0, 0);
+    gridWithNoHoles.placeCard(horseCard, 2, 2);
+    String expected = "B__\n" +
+            "___\n" +
+            "__R\n";
+    Assert.assertEquals(expected, gridWithNoHoles.toString());
+  }
+
+
+  // test GameCell file
+
+  // test hasCard
+  @Test
+  public void testHasCardInitiallyFalse() {
+    Assert.assertFalse(cellWithoutHole.hasCard());
+  }
+
+  @Test
+  public void testHasCardAfterPlacingCard() {
+    cellWithoutHole.placeCard(goatCard);
+    Assert.assertTrue(cellWithoutHole.hasCard());
+  }
+
+  // test placeCard
+  @Test
+  public void testPlaceCardInEmptyCell() {
+    cellWithoutHole.placeCard(goatCard);
+    Assert.assertEquals(goatCard, cellWithoutHole.getCard());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testPlaceCardInOccupiedCell() {
+    cellWithoutHole.placeCard(goatCard);
+    cellWithoutHole.placeCard(goatCard);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testPlaceCardInHoleCell() {
+    cellWithHole.placeCard(goatCard);
+  }
+
+  // test removeCard
+  @Test
+  public void testRemoveCard() {
+    cellWithoutHole.placeCard(goatCard);
+    cellWithoutHole.removeCard();
+    Assert.assertFalse(cellWithoutHole.hasCard());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testRemoveCardFromEmptyCell() {
+    cellWithoutHole.removeCard();
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testRemoveCardFromHoleCell() {
+    cellWithHole.removeCard();
+  }
+
+  // test isHole()
+  @Test
+  public void testIsHoleTrue() {
+    Assert.assertTrue(cellWithHole.isHole());
+  }
+
+  @Test
+  public void testIsHoleFalse() {
+    Assert.assertFalse(cellWithoutHole.isHole());
+  }
+
+  // test getCard
+  @Test
+  public void testGetCardFromOccupiedCell() {
+    cellWithoutHole.placeCard(goatCard);
+    Assert.assertEquals(goatCard, cellWithoutHole.getCard());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testGetCardFromEmptyCell() {
+    cellWithoutHole.getCard();
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testGetCardFromHole() {
+    cellWithHole.getCard();
+  }
+
+  // test toString
+  @Test
+  public void testToStringForEmptyCell() {
+    Assert.assertEquals("_", cellWithoutHole.toString());
+  }
+
+  @Test
+  public void testToStringForHoleCell() {
+    Assert.assertEquals("X", cellWithHole.toString());
+  }
+
+  @Test
+  public void testToStringForOccupiedCell() {
+    goatCard.createCardColor(Color.RED);
+    cellWithoutHole.placeCard(goatCard);
+    Assert.assertEquals("R", cellWithoutHole.toString());
+  }
 
 
   // testing the CardFileParser class
