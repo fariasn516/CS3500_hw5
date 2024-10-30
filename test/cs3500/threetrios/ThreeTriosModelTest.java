@@ -66,7 +66,7 @@ public class ThreeTriosModelTest {
     this.monkeyCard = new SimpleCard("monkey", Value.ACE, Value.ACE, Value.ACE, Value.ACE);
     this.roosterCard = new SimpleCard("rooster", Value.ONE, Value.ONE, Value.ONE, Value.ONE);
     this.dogCard = new SimpleCard("dog", Value.NINE, Value.EIGHT, Value.SEVEN, Value.SIX);
-    this.pigCard = new SimpleCard("pig", Value.FIVE, Value.FOUR, Value.THREE, Value.TWO);
+    this.pigCard = new SimpleCard("pig", Value.ACE, Value.FOUR, Value.THREE, Value.TWO);
   }
 
   // testing the model
@@ -104,7 +104,7 @@ public class ThreeTriosModelTest {
   // when this card's value is greater than that card's value with the given direction
   @Test
   public void shouldReturnOne() {
-    int compare = this.ratCard.compareTo(this.dogCard, Direction.NORTH);
+    int compare = this.pigCard.compareTo(this.dogCard, Direction.NORTH);
     Assert.assertEquals(1, compare);
   }
 
@@ -224,7 +224,40 @@ public class ThreeTriosModelTest {
   // makes sure that the returned card is the same as the original
   @Test
   public void shouldReturnCopyOfCard() {
+    Card copiedCard = this.snakeCard.copy();
+    boolean isEqual = this.snakeCard.equals(copiedCard);
+    Assert.assertTrue(isEqual);
+  }
 
+  // makes sure that changing something in the copied card doesn't change anything in the original
+  @Test
+  public void shouldNotMutateOriginalCopyOfCard() {
+    Card copiedCard = this.snakeCard.copy();
+    copiedCard.createCardColor(Color.BLUE);
+    boolean isEqual = this.snakeCard.equals(copiedCard);
+    Assert.assertFalse(isEqual);
+  }
+
+  // test the toString method
+  // prints out a card
+  @Test
+  public void printOutCard() {
+    String result = this.horseCard.toString();
+    Assert.assertEquals("horse 2 8 2 3 ", result);
+  }
+
+  // print out another card
+  @Test
+  public void printOutCard2() {
+    String result = this.roosterCard.toString();
+    Assert.assertEquals("rooster 1 1 1 1 ", result);
+  }
+
+  // print out a card with an A
+  @Test
+  public void printOutCardWithA() {
+    String result = this.goatCard.toString();
+    Assert.assertEquals("goat A 6 4 7 ", result);
   }
 
   // testing the CardFileParser class

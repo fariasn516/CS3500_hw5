@@ -150,7 +150,7 @@ public class SimpleCard implements Card {
     if (!this.name.equals(((SimpleCard) obj).name)) {
       return false;
     }
-    if (!this.color.equals(((SimpleCard) obj).color)) {
+    if (this.color != ((SimpleCard) obj).color) {
       return false;
     }
     for (Direction direction : Direction.values()) {
@@ -167,8 +167,7 @@ public class SimpleCard implements Card {
     StringBuilder stringRep = new StringBuilder();
     stringRep.append(this.name).append(" ");
     for (Direction direction : Direction.values()) {
-      stringRep.append(direction.toString()).append(": ")
-              .append(getValueFromDirection(direction)).append(" ");
+      stringRep.append(cardValues.get(direction).toString()).append(" ");
     }
     return stringRep.toString();
   }
