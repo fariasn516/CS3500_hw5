@@ -128,6 +128,17 @@ public class GameGrid implements Grid {
   }
 
   @Override
+  public boolean[][] getHoleLayout() {
+    boolean[][] layoutCopy = new boolean[numRows][numCols];
+    for (int i = 0; i < numRows; i++) {
+      for (int j = 0; j < numCols; j++) {
+        layoutCopy[i][j] = holeLayout[i][j];
+      }
+    }
+    return layoutCopy;
+  }
+
+  @Override
   public String toString() {
     StringBuilder stringRep = new StringBuilder();
     for (int row = 0; row < numRows; row++) {

@@ -22,6 +22,7 @@ public class GridFileParser {
     Scanner scanner = new Scanner(this.file);
     int numRows = readDimension(scanner, "Invalid row count.");
     int numCols = readDimension(scanner, "Invalid column count.");
+    scanner.nextLine();
     boolean[][] holeLayout = readHoleLayout(scanner, numRows, numCols);
 
     return new GameGrid(numRows, numCols, holeLayout);
@@ -31,15 +32,12 @@ public class GridFileParser {
     if (!scanner.hasNextInt()) {
       throw new IllegalArgumentException(errorMessage);
     }
-
-    int dimension = scanner.nextInt();
-    scanner.nextLine();
-    return dimension;
+    return scanner.nextInt();
   }
 
   private boolean[][] readHoleLayout(Scanner scanner, int numRows, int numCols) {
     boolean[][] holeLayout = new boolean[numRows][numCols];
-    int row = 0;
+    int row = 1;
 
     while (scanner.hasNextLine() && row < numRows) {
       String line = scanner.nextLine();

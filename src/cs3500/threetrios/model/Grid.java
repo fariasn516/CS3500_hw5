@@ -71,6 +71,13 @@ public interface Grid {
    *                                  if the cell is a hole or if it does not contain a card
    */
   Card getCard(int row, int col);
+
+  /**
+   * Returns a copy of the hole layout.
+   *
+   * @return a 2D boolean array where `true` indicates a hole and `false` indicates a card cell.
+   */
+  public boolean[][] getHoleLayout();
   
   /**
    * Converts the grid into a string representation.
@@ -78,6 +85,7 @@ public interface Grid {
    * @return a string representation of the grid
    */
   String toString();
+
 
 }
 

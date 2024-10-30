@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import cs3500.threetrios.model.Card;
 import cs3500.threetrios.model.CardFileParser;
 import cs3500.threetrios.model.Color;
 import cs3500.threetrios.model.Direction;
+import cs3500.threetrios.model.GameGrid;
 import cs3500.threetrios.model.Grid;
 import cs3500.threetrios.model.GridFileParser;
 import cs3500.threetrios.model.HumanPlayer;
@@ -352,7 +354,7 @@ public class ThreeTriosModelTest {
   // test the createDeck method
   @Test
   public void createLessDeck() throws FileNotFoundException {
-    String path = "CS3500_hw5/.idea/CardConfiguration/LessCards";
+    String path = ".idea/CardConfiguration/LessCards";
     CardFileParser parser = new CardFileParser(path);
     List<Card> result = parser.createDeck();
 
@@ -376,8 +378,65 @@ public class ThreeTriosModelTest {
 
 
   // testing the GridFileParser class
-  // test with Disconnected file
-  // test with HasHoles file
-  // test with NoHoles file
 
+  // testing createGridFromFile from Disconnected file
+  @Test
+  public void testDisconnectedFile() throws FileNotFoundException {
+    File file = new File(".idea/GridConfiguration/Disconnected");
+    GridFileParser parser = new GridFileParser(file);
+    GameGrid result = parser.createGridFromFile();
+
+    int expectedNumRows = 4;
+    int expectedNumCols = 4;
+    boolean[][] expectedHoleLayout = {
+            {true, false, false, true},
+            {true, true, false, false},
+            {true, false, true, true},
+            {true, true, true, false}
+    };
+
+    Assert.assertEquals(expectedNumRows, result.getNumRows());
+    Assert.assertEquals(expectedNumCols, result.getNumCols());
+    Assert.assertArrayEquals(expectedHoleLayout, result.getHoleLayout());
+  }
+
+  // testing createGridFromFile from HasHoles file
+  @Test
+  public void testHasHolesFile() throws FileNotFoundException {
+    File file = new File(".idea/GridConfiguration/HasHoles");
+    GridFileParser parser = new GridFileParser(file);
+    GameGrid result = parser.createGridFromFile();
+
+    int expectedNumRows = 3;
+    int expectedNumCols = 4;
+    boolean[][] expectedHoleLayout = {
+            {false, false, false, false},
+            {true, false, false, false},
+            {false, false, true, true}
+    };
+
+    Assert.assertEquals(expectedNumRows, result.getNumRows());
+    Assert.assertEquals(expectedNumCols, result.getNumCols());
+    Assert.assertArrayEquals(expectedHoleLayout, result.getHoleLayout());
+  }
+
+  // testing createGridFromFile from NoHoles file
+  @Test
+  public void testNoHolesFile() throws FileNotFoundException {
+    File file = new File(".idea/GridConfiguration/NoHoles");
+    GridFileParser parser = new GridFileParser(file);
+    GameGrid result = parser.createGridFromFile();
+
+    int expectedNumRows = 3;
+    int expectedNumCols = 3;
+    boolean[][] expectedHoleLayout = {
+            {false, false, false},
+            {false, false, false},
+            {false, false, false}
+    };
+
+    Assert.assertEquals(expectedNumRows, result.getNumRows());
+    Assert.assertEquals(expectedNumCols, result.getNumCols());
+    Assert.assertArrayEquals(expectedHoleLayout, result.getHoleLayout());
+  }
 }
