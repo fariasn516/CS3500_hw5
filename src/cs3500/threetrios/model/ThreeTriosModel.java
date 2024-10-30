@@ -28,6 +28,9 @@ public class ThreeTriosModel implements Model {
    * @param rand represents the random used for shuffling
    */
   public ThreeTriosModel(Random rand) {
+    if (rand == null) {
+      throw new IllegalArgumentException("Random cannot be null");
+    }
     this.rand = rand;
   }
 
@@ -78,10 +81,21 @@ public class ThreeTriosModel implements Model {
     return false;
   }
 
+  /**
+   *
+   * @param grid
+   * @return
+   */
   private boolean hasEvenCardCells(Grid grid) {
     return grid.getCardCellCount() % 2 == 0;
   }
 
+  /**
+   *
+   * @param cards
+   * @param grid
+   * @return
+   */
   private boolean invalidCardCount(List<Card> cards, Grid grid) {
     return cards.size() != grid.getCardCellCount() + 1;
   }
@@ -111,6 +125,7 @@ public class ThreeTriosModel implements Model {
   @Override
   public void placingPhase(Card card, int row, int col) {
     currentPlayer.removeFromHand(card);
+    currentPlayer.addToOwnership(List.of(card));
     grid.placeCard(card, row, col);
   }
 

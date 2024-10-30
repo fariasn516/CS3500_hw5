@@ -4,7 +4,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cs3500.threetrios.model.Card;
@@ -13,9 +15,11 @@ import cs3500.threetrios.model.Color;
 import cs3500.threetrios.model.Direction;
 import cs3500.threetrios.model.Grid;
 import cs3500.threetrios.model.GridFileParser;
+import cs3500.threetrios.model.HumanPlayer;
 import cs3500.threetrios.model.Model;
 import cs3500.threetrios.model.Player;
 import cs3500.threetrios.model.SimpleCard;
+import cs3500.threetrios.model.ThreeTriosModel;
 import cs3500.threetrios.model.Value;
 
 public class ThreeTriosModelTest {
@@ -71,15 +75,97 @@ public class ThreeTriosModelTest {
 
   // testing the model
   // exceptions to be thrown
+  // when random is null
+  @Test (expected = IllegalArgumentException.class)
+  public void shouldThrowIllegalArgumentRandomNull() {
+    Model model = new ThreeTriosModel(null);
+  }
+
+  // test the startGame method
+
+  // test the placingPhase method
+
+  // test the battlingPhase method
+
+  // test the findCardByName method
+
+  // test the getOppositeDirection method
+
+  // test the takeTurn method
+
+  // test the isGameOver method
+
+  // test the winner method
+
+  // test the getGrid method
+
+  // test the getCurrentPlayer method
+
+
 
   // testing the HumanPlayer class
   // exceptions to be thrown
+  // when cards in hand is null
+  @Test (expected = IllegalArgumentException.class)
+  public void shouldThrowIllegalArgumentHandNull(){
+    Player newPlayer = new HumanPlayer(null, Color.RED);
+  }
+
+  // when color is null
+  @Test (expected = IllegalArgumentException.class)
+  public void shouldThrowIllegalArgumentColorNull(){
+    this.monkeyCard.createCardColor(Color.RED);
+    this.dragonCard.createCardColor(Color.RED);
+    List<Card> cards = List.of(this.monkeyCard, this.dragonCard);
+
+    Player newPlayer = new HumanPlayer(cards, null);
+  }
+
+  // when not all cards adhere to the player's color
+  @Test (expected = IllegalArgumentException.class)
+  public void shouldThrowIllegalArgumentHandNotCorrectColor(){
+    this.monkeyCard.createCardColor(Color.RED);
+    this.dragonCard.createCardColor(Color.BLUE);
+    List<Card> cards = List.of(this.monkeyCard, this.dragonCard);
+
+    Player newPlayer = new HumanPlayer(cards, Color.RED);
+  }
+
+  // test the removeFromHand method
+  // when the card does not exist in the hand
+  // when the card exists in the hand
+
+  // test the removeFromOwnership method
+  // when there is nothing to remove
+  // when there is something to remove
+
+  // test the addToOwnerShip method
+
+  // test the getOwnedCardsOnBoard method
+
+  // test the getCardsInHand method
+
+  // test the getNumberOwnedCards method
+
+  // test the getColor method
+
+  // test the getAllOwnedCards method
+
+  // test the toString method
+
+
 
   // testing the GameGrid class
   // exceptions to be thrown
 
+
+  // testing the GameCell class
+  // exceptions to be thrown from constructor
+
+
+
   // testing the SimpleCard class
-  // exceptions to be thrown
+  // exceptions to be thrown from constructor
   // when the map of directions and values is null
   @Test (expected = IllegalArgumentException.class)
   public void shouldThrowIllegalArgumentMapNull() {
@@ -260,9 +346,38 @@ public class ThreeTriosModelTest {
     Assert.assertEquals("goat A 6 4 7 ", result);
   }
 
+
+
   // testing the CardFileParser class
+  // test the createDeck method
+  @Test
+  public void createLessDeck() throws FileNotFoundException {
+    String path = "CS3500_hw5/.idea/CardConfiguration/LessCards";
+    CardFileParser parser = new CardFileParser(path);
+    List<Card> result = parser.createDeck();
+
+    Card sleepyCat =
+            new SimpleCard("SleepyCat", Value.ONE, Value.TWO, Value.THREE, Value.FOUR);
+    Card creepyCat =
+            new SimpleCard("CreepyCat", Value.FIVE, Value.SIX, Value.SEVEN, Value.EIGHT);
+    Card happyCat =
+            new SimpleCard("HappyCat", Value.NINE, Value.ACE, Value.ONE, Value.TWO);
+    Card angryCat =
+            new SimpleCard("AngryCat", Value.THREE, Value.FOUR, Value.FIVE, Value.SIX);
+    Card weepyCat =
+            new SimpleCard("WeepyCat", Value.SEVEN, Value.EIGHT, Value.NINE, Value.ACE);
+    Card crazyCat =
+            new SimpleCard("CrazyCat", Value.SIX, Value.SIX, Value.SEVEN, Value.ONE);
+    List<Card> expected = List.of(sleepyCat, creepyCat, happyCat, angryCat, weepyCat, crazyCat);
+
+    Assert.assertEquals(expected, result);
+  }
+
+
 
   // testing the GridFileParser class
-
+  // test with Disconnected file
+  // test with HasHoles file
+  // test with NoHoles file
 
 }
