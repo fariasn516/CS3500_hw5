@@ -20,8 +20,8 @@ public interface Player {
   void removeFromOwnership(Card card);
 
   /**
-   * Adds the given list of cards to ownership.
-   * @param cards represents the list of cards that are going to be added to ownership
+   * Adds the given card to ownership.
+   * @param cards represents the card that is going to be added to ownership
    */
   void addToOwnership(Card cards);
 
